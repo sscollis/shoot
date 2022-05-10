@@ -28,7 +28,10 @@ OBJS1 = conte.o parder.o adjder.o mean2d.o rk4.o bslib1.o bslib2.o
 # Use Numerical-Recepies only if you have a valid license
 #
 ifdef USE_NR
-  OBJS1 += nr_rtsafe.o
+  ifeq ($(LIBNR_DIR),)
+    LIBNR_DIR = $(HOME)/git/NR-utilities
+  endif
+  LIB += -L$(LIBNR_DIR) -lnr
 endif
 
 OBJS2 = grad.o grad2.o g1.o
