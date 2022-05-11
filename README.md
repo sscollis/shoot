@@ -12,4 +12,3 @@ Compressible stability solver using shooting
    so that you need to provide that (or implement another root finder)
 
 S. Scott Collis\
-Mon May  9 09:33:41 MDT 2022
