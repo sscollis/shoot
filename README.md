@@ -16,6 +16,9 @@ I really need to setup a test case for this.  That said, `shoot` is quite
 flexible and allow you to polish eigenvalues, solve the adjoint, and compute
 nonparallel terms all for a variety of mean flows and formats.
 
+The idea is that `shoot` complements `stab` by allowing you to polish, compute
+adjoints, and include nonparallel effects.
+
 ## Notes
 1. Currently this uses the Numerical Recipes RTSAFE routine (not included)
    so that you need to provide that (or implement another root finder)
