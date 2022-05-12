@@ -23,5 +23,4 @@ nonparallel terms all for a variety of mean flows and formats.
    that would be trivial to implement.
 3. I have not tested this solver recently so please USE WITH CAUTION
 
---
 S. Scott Collis
