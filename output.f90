@@ -13,7 +13,7 @@
 
        complex :: Ehp(neq,neq), Fhp(neq,neq), Ehpinv(neq,neq)
 
-       complex :: Ehn(neq,neq), Fhn(neq,neq) 
+       complex :: Ehn(neq,neq), Fhn(neq,neq)
 
        complex :: vec(neq)
        complex, external :: inprod
@@ -30,12 +30,12 @@
 !.... are computed and stored in that manner.
 
        do j = 1, ny
-	 
+
 	 y = ymax - dy * real(j-1)
 
 !.... compute "parallel" matrices
-	 
-	 call parallel( y, Ehp, Fhp, 1, Ahp) 
+
+	 call parallel( y, Ehp, Fhp, 1, Ahp)
 
 !.... compute the "full" matrices
 
@@ -52,7 +52,7 @@
 
 	 call inverse( neq, Ehp, Ehpinv)
 	 Fhp = matmul( Ehpinv, Fh )
-	 
+
 !.... use the parallel equations to compute the derivative of efun wrt y
 
 	 g2efun(:,j) = -matmul( Fhp, efun(:,j) )
@@ -60,7 +60,7 @@
 !.... Z is the adjoint times the inverse Eh parallel matrix
 
 	 Z = matmul( adj(:,j), Ehpinv )
-	 
+
 !.... c1 is the part of h1 that doesn't require g1efun
 !.... note that the full matrices are used here
 !
@@ -104,12 +104,12 @@
 
 	 Z3(:,j) = matmul( Z, Ch )
 
-       end do
+  end do
 
 !.... output the results to an unformatted file for processing later on
 
-       write(iout) iver, sl, alpha, beta, omega, efun, g2efun, adj, &
-                   c1, c2, c3, Z1, Z2, Z3
+  write(iout) iver, sl, alpha, beta, omega, efun, g2efun, adj, &
+              c1, c2, c3, Z1, Z2, Z3
 
-       return
-       end
+  return
+  end subroutine output

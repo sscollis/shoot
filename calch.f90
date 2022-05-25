@@ -2,8 +2,8 @@
 	subroutine calch( s, n, r, h, dhds, dhdr, dhdsr, dhdrr )
 !==============================================================================
 !
-!	Compute the metrics for a curved wall.  
-!	Set the functions xloc, yloc and arc for the 
+!	Compute the metrics for a curved wall.
+!	Set the functions xloc, yloc and arc for the
 !	parabolic cylinder.
 !
 !	S. Scott Collis
@@ -20,14 +20,13 @@
 
 	real :: xl, yl, th, bn1, bn2, dxdy, dydx, dxbds, dybds, dx, dy, &
 	        ddxdx, ddydx, ddxdy, ddydy, d2dxdx2, d2dydx2, d2dxdy2,  &
-		d2dydy2, dbn1, dbn2, d2xdy2, d2ydx2, d2xbds2, d2ybds2,  &
-		d2bn1, d2bn2
+					d2dydy2, dbn1, dbn2, d2xdy2, d2ydx2, d2xbds2, d2ybds2,  &
+					d2bn1, d2bn2
 
 	real :: a(n), b(n), dads(n), dbds(n)
-	
+
 	real, parameter :: zero = 0.0, pt5 = 0.5, one = 1.0, onept5 = 1.5, &
-	                   two = 2.0,  twopt5 = 2.5, three = 3.0, &
-			   infty = 1.0e30
+	                   two = 2.0,  twopt5 = 2.5, three = 3.0, infty = 1.0e30
 !==============================================================================
 	if (s.eq.-one) then
 	  h     = one
@@ -45,7 +44,7 @@
 	bn2 =  cos(th)
 
 !	write(*,"(8(e13.6,1x))") s, xl, yl, th, bn1, bn2
-	
+
 	if (xl .eq. zero) then
 	  dydx = infty
 	else
@@ -83,7 +82,7 @@
 	  d2dxdy2 = zero
 	  d2dydy2 = zero
 	end if
-	
+
 	if ( abs(bn1) .gt. abs(bn2) ) then
 	  dbn1 = ( -ddydy/(dx**2 + dy**2)**pt5 + pt5*dy*(two*dx*ddxdy + &
 		    two*dy*ddydy)/(dx**2 + dy**2)**onept5 ) * dybds
@@ -104,7 +103,7 @@
 	  d2ydx2  = -one / ( two * sqrt(two) * xl**onept5 )
 	  d2xbds2 = -(one + dydx**2)**(-onept5) * dydx * d2ydx2 * dxbds
 	  d2ybds2 = d2ydx2*(dxbds)**2 + dydx*d2xbds2
-	end if    
+	end if
 
 	if ( abs(bn1) .gt. abs(bn2) ) then
 	  d2bn1 = ((ddxdy*(dy*ddxdy-dx*ddydy)+dx*(dy*d2dxdy2-dx*d2dydy2))/ &
@@ -138,27 +137,27 @@
 
 	a = dxbds + r * dbn1
 	b = dybds + r * dbn2
-	
+
 	h = sqrt( a**2 + b**2 )
-	
+
 	dads = d2xbds2 + r * d2bn1
 	dbds = d2ybds2 + r * d2bn2
 
 	dhds = ( a * dads + b * dbds ) / h
 
 	dhdr = ( a * dbn1 + b * dbn2 ) / h
-	
+
 	dhdrr = ( -dhdr**2 + dbn1**2 + dbn2**2 ) / h
-	
+
 	dhdsr = -dhds / h**2 * ( a * dbn1 + b * dbn2 ) + &
 	        ( dads * dbn1 + a * d2bn1 + dbds * dbn2 + b * d2bn2 ) / h
 
 !	do i = 1, n
 !	  write(70,10) r(i), h(i), dhds(i), dhdr(i), dhdsr(i), dhdrr(i)
 !	end do
-	
+
  10	format( 8(1pe13.6,1x) )
- 
+
 	return
 	end
 
@@ -166,10 +165,10 @@
 	function xloc(x, ds)
 !==============================================================================
 	implicit none
-	
+
 	real :: xloc, x, ds
 	real, external :: rtflsp, func
-	
+
 	real :: darc, x1
 	common /distance/ darc, x1
 !==============================================================================
@@ -177,7 +176,7 @@
 	x1   = x
 	xloc = rtflsp(func, x1, x1 + 2.0 * ds, 1.0d-12)
 	return
-	end 
+	end
 
 !==============================================================================
 	function yloc(x)
@@ -185,7 +184,7 @@
 !	For a parabolic cylinder
 !==============================================================================
 	implicit none
-	
+
 	real :: yloc, x
 !==============================================================================
         yloc = sqrt( 2.0 * x )
@@ -196,16 +195,16 @@
 	function func(x)
 !==============================================================================
 	implicit none
-	
+
 	real :: func, x
 	real, external :: arc
-	
+
 	real :: darc, x1
 	common /distance/ darc, x1
 !==============================================================================
 	func = darc - arc(x1,x)
 	return
-	end 
+	end
 
 !==============================================================================
 	function arc(x1,x2)
@@ -213,7 +212,7 @@
 !	For a parabolic cylinder
 !==============================================================================
 	implicit none
-	
+
 	real :: arc, x1, x2, xi1, xi2
 !==============================================================================
         xi1 = sqrt(x1)

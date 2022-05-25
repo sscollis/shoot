@@ -1,5 +1,5 @@
 !=============================================================================!
-        module bspline
+  module bspline
 
 	integer           :: nbs, kyord = 5
 	real, allocatable :: yknot(:)
@@ -14,8 +14,8 @@
 !
 !       Compute the nonparallel corrections to the LST growth-rate and
 !       wavenumber.  Updated to second-order boundary derivatives and
-!	now it computes the growth-rate and wavenumber for the wall-
-!	normal maximum of (u,v,w).
+!	      now it computes the growth-rate and wavenumber for the wall-
+!	      normal maximum of (u,v,w).
 !
 !       S. Scott Collis
 !
@@ -59,12 +59,12 @@
 	open(20,file='NPsigma.dat')
 	open(21,file='NPalpha.dat')
 	open(22,file='NPparm.new')
-	
+
 !.... open the output.dat file and read the parameters
-	
+
 	open(iin,file='output.dat',form='unformatted',err=100)
 	read(iin) nx, ny, ymax, Ma, Re, Pr
-	
+
 	if (nx.le.1) then
 	  write(*,*) 'Nx must be greater than 1'
 	  call exit(0)
@@ -93,7 +93,7 @@
 	close(iin)
 
 	do i = 1, nx
-	
+
 !.... write-out the regular eigenfunctions
 
 	  base = 'efun'
@@ -104,7 +104,7 @@
 	      (real(q(idof,j,i)), aimag(q(idof,j,i)), idof=1,ndof)
 	  end do
 	  close(iout)
-	
+
 !.... write-out the adjoint eigenfunctions
 
 	  base = 'adj'
@@ -138,7 +138,7 @@
 	dqdxy(:,:,nx) = ( 1.5 * dqdy(:,:,nx) - 2.0 * dqdy(:,:,nx-1) + &
 	                  0.5 * dqdy(:,:,nx-2) ) / ( x(nx) - x(nx-1) )
 	end if
-	
+
 	dx = (x(nx) - x(1)) / real(nx-1)
 	call cg1( ndof*ny, q, dqdx, nx, dx, 0, .false. )
 	call cg1( ndof*ny, dqdy, dqdxy, nx, dx, 0, .false. )
@@ -156,9 +156,9 @@
 	dalphadx(nx) = ( 1.5 * alpha(nx) - 2.0 * alpha(nx-1) + &
 	                 0.5 * alpha(nx-2) ) / ( x(nx) - x(nx-1) )
 	end if
-	
+
 	call cg1( 1, alpha, dalphadx, nx, dx, 0, .false. )
-	
+
 !.... compute the disturbance kinetic energy integral (trapezoid)
 
 	do i = 1, nx
@@ -204,7 +204,7 @@
 #endif
 
 !.... compute the streamwise derivative of the disturbance kinetic energy
-	
+
 	if (.false.) then
 !	dkedx(1) = ( ke(2) - ke(1) ) / ( x(2) - x(1) )
 	dkedx(i) = ( -0.5 * ke(3) + 2.0 * ke(2) - 1.5 * ke(1) ) / &
@@ -218,7 +218,7 @@
 	end if
 
 	call g1( 1, ke, dkedx, nx, dx, 0, .false. )
-	
+
 !.... compute the streamwise derivative of the maximum u velocity
 
 	if (.false.) then
@@ -246,7 +246,7 @@
 	  h1 = pt5 * dy * ( c1(j,i) + inprod(ndof, z1(:,j,i), dqdx(:,j,i) ) )
 	  h2 = pt5 * dy * ( dalphadx(i) * c2(j,i) + c3(j,i) + &
                             inprod(ndof, z2(:,j,i), dqdx(:,j,i) ) + &
-                            inprod(ndof, z3(:,j,i), dqdxy(:,j,i) ) ) 
+                            inprod(ndof, z3(:,j,i), dqdxy(:,j,i) ) )
 	  do j = 2, ny-1
 	    h1 = h1 + dy * ( c1(j,i) + inprod(ndof, z1(:,j,i), dqdx(:,j,i) ) )
 	    h2 = h2 + dy * ( dalphadx(i) * c2(j,i) + c3(j,i) + &
@@ -258,7 +258,7 @@
                                  dqdx(:,j,i) ) )
 	  h2 = h2 + pt5 * dy * ( dalphadx(i) * c2(j,i) + c3(j,i) + &
                                  inprod(ndof, z2(:,j,i), dqdx(:,j,i) ) + &
-                                 inprod(ndof, z3(:,j,i), dqdxy(:,j,i) ) ) 
+                                 inprod(ndof, z3(:,j,i), dqdxy(:,j,i) ) )
 
 !.... compute the growth-rate and wavenumber with nonparallel corrections
 
@@ -277,7 +277,7 @@
 !.... NPsigma.dat
 !
 !     1.   parallel growth-rate
-!     2.   nonparallel correction 
+!     2.   nonparallel correction
 !     3-8. component data
 !     9.   eigenfunction growth term
 !     10.  Complete nonparallel growth-rate
@@ -360,4 +360,4 @@
 #endif
 
 	return
-        end 
+  end 

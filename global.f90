@@ -1,9 +1,9 @@
 !=============================================================================!
       module global
 !
-!  Global variables for shoot
+!     Global variables for shoot
 !
-!  Revised:  9-25-96
+!     Revised:  9-25-96
 !=============================================================================!
 
 !.... problem dimensions
@@ -15,6 +15,7 @@
 !.... flags
 
       integer :: ievec, iver, npcalc
+      bool :: multi_profile
 
 !.... solution storage
 
@@ -34,7 +35,7 @@
       real, parameter :: cv     = 716.5
       real, parameter :: cp     = 1003.1
       real, parameter :: Rgas   = 286.6
-      
+
       integer :: mattyp
       real    :: datmat(3)
 
@@ -53,35 +54,35 @@
       real, parameter    :: pt5     = 5.0000000000000000000d-01
       real, parameter    :: pt66    = 6.6666666666666666666d-01
       real, parameter    :: one     = 1.0000000000000000000d+00
-      real, parameter    :: onept25 = 1.2500000000000000000d+00	  
+      real, parameter    :: onept25 = 1.2500000000000000000d+00
       real, parameter    :: onept33 = 1.3333333333333333333d+00
       real, parameter    :: onept5  = 1.5000000000000000000d+00
       real, parameter    :: two     = 2.0000000000000000000d+00
       real, parameter    :: three   = 3.0000000000000000000d+00
       real, parameter    :: four    = 4.0000000000000000000d+00
       real, parameter    :: pi      = 3.1415926535897932385d+00
-      complex, parameter :: im      = (0.0,1.0) 
+      complex, parameter :: im      = (0.0,1.0)
 
       end module global
 
 !=============================================================================!
       module material
-!	
-!  Interfaces for material routines
 !
-!  Revised:  4-16-96
+!     Interfaces for material routines
+!
+!     Revised:  4-16-96
 !=============================================================================!
       interface getmat
-	subroutine getmat(t, mu, lm, con, &
-	  dmu, d2mu, dlm, d2lm, dcon, d2con)
-	      real t(:), mu(:), lm(:), con(:), dmu(:), d2mu(:)
-	      real dlm(:), d2lm(:), dcon(:), d2con(:)
-	end subroutine getmat
-	subroutine sgetmat(t, mu, lm, con, &
-	  dmu, d2mu, dlm, d2lm, dcon, d2con)
-	      real t, mu, lm, con, dmu, d2mu, dlm, d2lm
-	      real dcon, d2con
-	end subroutine sgetmat
+      	subroutine getmat(t, mu, lm, con, &
+      	                  dmu, d2mu, dlm, d2lm, dcon, d2con)
+      	  real t(:), mu(:), lm(:), con(:), dmu(:), d2mu(:)
+      	  real dlm(:), d2lm(:), dcon(:), d2con(:)
+      	end subroutine getmat
+      	subroutine sgetmat(t, mu, lm, con, &
+      	                   dmu, d2mu, dlm, d2lm, dcon, d2con)
+          real t, mu, lm, con, dmu, d2mu, dlm, d2lm
+          real dcon, d2con
+      	end subroutine sgetmat
       end interface
-      
+
       end module material

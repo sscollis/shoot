@@ -1,25 +1,26 @@
 
-!.... Use a Streett bl_sta.out file for the meanflow
+! \todo Use a Streett bl_sta.out file for the meanflow
+
+! SSC:  this is not implemented yet...
 
 !=============================================================================!
-        module meanflow
+  module meanflow
 !=============================================================================!
-	integer :: nym, ndofm=5, kord
-	real, allocatable :: ym(:), vmt(:,:), g2vmt(:,:), g22vmt(:,:)
-	real, allocatable :: vms(:,:), g2vms(:,:), g22vms(:,:), knot(:)
-
-        end module meanflow
+  	integer :: nym, ndofm=5, kord
+  	real, allocatable :: ym(:), vmt(:,:), g2vmt(:,:), g22vmt(:,:)
+  	real, allocatable :: vms(:,:), g2vms(:,:), g22vms(:,:), knot(:)
+  end module meanflow
 
 !=============================================================================!
 	subroutine initmean(imean)
 !=============================================================================!
-	return
+  return
 	end
 
 !=============================================================================!
 	subroutine mean(imean, i)
 !
-!       Read a meanflow profile and spline it
+!  Read a meanflow profile and spline it (often computing using compbl)
 !
 !=============================================================================!
 	use meanflow
@@ -29,27 +30,27 @@
 
 !.... local
 
-	integer :: j, k 
+	integer :: j, k
 	integer :: ier
 	real    :: tmp
 
 	character*80 :: base, fname
 !=============================================================================!
-	
+
 !.... read the mean field and spline to the new grid
 
 	base = 'profile'
 	call makename(base,i,fname)
-	open (imean, file=fname, form='formatted', status='old',err=1000)
-	
+	open (imean, file=fname, form='formatted', status='old', err=1000)
+
 !.... determine the number of points in the profile
 
 	nym = 0
- 20	continue
+  20 continue
  	read(imean,*,end=30) tmp
 	nym = nym + 1
 	goto 20
- 30	continue
+  30 continue
  	rewind(imean)
 
 !.... allocate room for the profile data
@@ -58,8 +59,8 @@
 	  deallocate( ym, vmt, vms, g2vmt, g2vms, g22vmt, g22vms )
 	end if
 	allocate( ym(nym), vmt(nym,ndofm), vms(nym,ndofm), &
-                  g2vmt(nym,ndofm), g2vms(nym,ndofm), &
-                  g22vmt(nym,ndofm), g22vms(nym,ndofm), STAT=ier )
+            g2vmt(nym,ndofm), g2vms(nym,ndofm), &
+            g22vmt(nym,ndofm), g22vms(nym,ndofm), STAT=ier )
 	if (ier .ne. 0) then
 	  write(*,"('ERROR:  allocating mean field')")
 	  call exit(1)
@@ -83,7 +84,7 @@
 !	call SPLINE(nym, ym, vmt(1,3), vms(1,3))
 !	call SPLINE(nym, ym, vmt(1,4), vms(1,4))
 !	call SPLINE(nym, ym, vmt(1,5), vms(1,5))
-	
+
 !.... read the first derivative and spline to the new grid
 
 	base = 'first'
@@ -105,7 +106,7 @@
 !	call SPLINE(nym, ym, g2vmt(1,3), g2vms(1,3))
 !	call SPLINE(nym, ym, g2vmt(1,4), g2vms(1,4))
 !	call SPLINE(nym, ym, g2vmt(1,5), g2vms(1,5))
-	
+
 !.... read the second derivative and spline to the new grid
 
 	base = 'second'
@@ -127,19 +128,18 @@
 !	call SPLINE(nym, ym, g22vmt(1,3), g22vms(1,3))
 !	call SPLINE(nym, ym, g22vmt(1,4), g22vms(1,4))
 !	call SPLINE(nym, ym, g22vmt(1,5), g22vms(1,5))
-	
+
 	return
 
-10	format(8(1pe13.6,1x))
+  10 format(8(1pe13.6,1x))
 
-1000	write(*,"('ERROR:  reading profile')")
+  1000 write(*,"('ERROR:  reading profile')")
 	call exit(1)
-1010	write(*,"('ERROR:  reading first')")
+  1010 write(*,"('ERROR:  reading first')")
 	call exit(1)
-1020	write(*,"('ERROR:  reading second')")
+  1020 write(*,"('ERROR:  reading second')")
 	call exit(1)
-
-        end
+  end
 
 !=============================================================================!
 	subroutine getmean( i, y, v, g1v, g2v, g11v, g12v, g22v )
@@ -149,14 +149,12 @@
 
 	integer :: i
 	real    :: y, v(ndofm), g1v(ndofm), g2v(ndofm)
-        real    :: g11v(ndofm), g12v(ndofm) , g22v(ndofm)
+  real    :: g11v(ndofm), g12v(ndofm) , g22v(ndofm)
 
 	integer :: idof
 !=============================================================================!
-
 	write(*,"('ERROR:  Getmean is not supported in this version')")
 	call exit(1)
-
 	return
 	end
 
@@ -177,13 +175,13 @@
 
 	if ( y .le. ym(nym) ) then
 	  do idof = 1, ndofm
-	  vm(idof)    = BSVAL( y, kord, knot, nym,    vms(1,idof) )
-	  g2vm(idof)  = BSVAL( y, kord, knot, nym,  g2vms(1,idof) )
-	  g22vm(idof) = BSVAL( y, kord, knot, nym, g22vms(1,idof) )
-!	  call SPEVAL(nym, ym,    vmt(1,idof),    vms(1,idof), y,    vm(idof))
-!	  call SPEVAL(nym, ym,  g2vmt(1,idof),  g2vms(1,idof), y,  g2vm(idof))
-!	  call SPEVAL(nym, ym, g22vmt(1,idof), g22vms(1,idof), y, g22vm(idof))
-          end do
+  	  vm(idof)    = BSVAL( y, kord, knot, nym,    vms(1,idof) )
+  	  g2vm(idof)  = BSVAL( y, kord, knot, nym,  g2vms(1,idof) )
+  	  g22vm(idof) = BSVAL( y, kord, knot, nym, g22vms(1,idof) )
+!	    call SPEVAL(nym, ym,    vmt(1,idof),    vms(1,idof), y,    vm(idof))
+!	    call SPEVAL(nym, ym,  g2vmt(1,idof),  g2vms(1,idof), y,  g2vm(idof))
+!	    call SPEVAL(nym, ym, g22vmt(1,idof), g22vms(1,idof), y, g22vm(idof))
+    end do
 	else
 	  do idof = 1, ndofm
 	    vm(idof)    = vmt(nym,idof)
@@ -191,6 +189,6 @@
 	    g22vm(idof) = g22vmt(nym,idof)
 	  end do
 	end if
-	
+
 	return
-        end
+  end

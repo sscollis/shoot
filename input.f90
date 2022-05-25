@@ -4,23 +4,28 @@
 	use global
 	use material
 	implicit none
+
+	namelist /inputparam/ mattyp, Ma, Re, Pr, ny, ymax, ievec, alphar, alphai, &
+	                      betar, betai, omegar, omegai, iver, sl, npcalc
 !==============================================================================
+
+  write (*,"('SHOOT Compressible Flow Linear Stability Solver')")
 
 !.... Constant mu or Sutherland's law
 
-!	write (*,"(/,'(0) for constant Mu, (1) for Sutherland ==> ',$)")
-        read (*,*) mattyp
+ 	write (*,"('(0) for constant Mu, (1) for Sutherland ==> ',$)")
+  read (*,*) mattyp
 
 	if (mattyp .eq. 1) then 	! for Sutherland's law (AIR)
-	
+
 !.... get the freestream stagnation temperature
 
-!	  write (*,"('Enter the freestream T0 (K) ==> ',$)")
+	  write (*,"('Enter the freestream T0 (K) ==> ',$)")
 	  read (*,*) T0
 	  te = t0 / ( one + pt5 * gamma1 * Ma**2 )
 
 !.... set fluid properties
-	
+
 	  datmat(1) = 1.715336725523065e-05
 	  datmat(2) = 273.0
 	  datmat(3) = 110.4
@@ -30,24 +35,24 @@
 	  datmat(3) = zero
 	end if
 
-!	write (*,"('Enter Ma, Re, Pr ==> ',$)")
+	write (*,"('Enter Ma, Re, Pr ==> ',$)")
 	read (*,*) Ma, Re, Pr
 
 !.... get the fluid properties at the reference state
-	
+
 	call getmat(te, rmue, rlme, cone, dmue, d2mue, &
 	            dlme, d2lme, dcone, d2cone)
 
-!	write (*,"('Enter ny, Ymax ==> ',$)")
+	write (*,"('Enter ny, Ymax ==> ',$)")
 	read (*,*) ny, ymax
-!	write (*,"('Compute eigenfuntions (0/1) ==> ',$)")
+	write (*,"('Compute eigenfuntions (0/1) ==> ',$)")
 	read (*,*) ievec
 
-!	write (*,"('Enter alphar, alphai ==> ',$)")
+	write (*,"('Enter alphar, alphai ==> ',$)")
 	read (*,*) alphar, alphai
-!	write (*,"('Enter betar, betai ==> ',$)")
+	write (*,"('Enter betar, betai ==> ',$)")
 	read (*,*) betar, betai
-!	write (*,"('Enter omegar, omegai ==> ',$)")
+	write (*,"('Enter omegar, omegai ==> ',$)")
 	read (*,*) omegar, omegai
 
 !.... set alpha and beta and omega
@@ -59,21 +64,24 @@
 !.... These two variables are now read from the parm.dat file
 !.... along with alphar, alphai
 
-!	write (*,"('Enter profile index ==> ',$)")
+	write (*,"('Enter profile index ==> ',$)")
 	read (*,*) iver
-	
-!	write(*,"('Enter s (-1 = no curvature) ==> ',$)") 
+
+	write(*,"('Enter s (-1 = no curvature) ==> ',$)")
 	read(*,*) sl
 
 !.... npcalc = 0   -->  polish eigenvalues, solve adjoint, compute nonparallel
 !.... npcalc = 1   -->  compute nonparallel terms assuming output.dat is avail
 !.... npcalc = 2   -->  polish, solve adjoint, write output.dat
 
-!	write(*,"('Enter npcalc ==> ',$)") 
+	write(*,"('Enter npcalc ==> ',$)")
 	read(*,*) npcalc
 
-!	write(*,*)
+!.... echo input using Namelist format
+
+	write(*,*)
+	write(*,NML=inputparam)
+	write(*,*)
 
 	return
 	end
-

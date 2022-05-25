@@ -4,7 +4,7 @@
 !=============================================================================!
       use global
       implicit none
-      
+
       complex :: Uic(neq,neq)
       integer :: ic
 
@@ -27,9 +27,9 @@
 !.... Compute the matrices in the farfield
 
       call parallel( ymax, Eh, Fh, 0 )
-      
+
 !.... Multiply Fh by Eh^{-1}
-      
+
       call inverse( neq, Eh, Ehinv)
       Fh = matmul( Ehinv, Fh )
 
@@ -43,19 +43,19 @@
       Fh = -Fh
 
 !.... solve the eigenproblem
-      
+
       call CGEEV('N', 'V', neq, Fh, neq, eval, evec, &
-	         neq, evec, neq, work, lwork, rwork, info)
-      
+      	         neq, evec, neq, work, lwork, rwork, info)
+
 !.... use the solutions that are damped to infinity to form the initial
 
       Uic = zero
       ic = 0
       do ieq = 1, neq
-	if ( real(eval(ieq)) .lt. zero ) then
-	  ic = ic + 1
-	  Uic(:,ic) = evec(:,ieq) * exp( eval(ieq) * ymax )
-	end if
+      	if ( real(eval(ieq)) .lt. zero ) then
+      	  ic = ic + 1
+      	  Uic(:,ic) = evec(:,ieq) * exp( eval(ieq) * ymax )
+      	end if
       end do
 
       deallocate( work, rwork )
