@@ -32,14 +32,14 @@
 
 !.... externally defined routines
 
-#ifdef USE_ODEINT
-!.... EXPERIMENTAL -- not verified
       complex, external :: inprod
-      external FHOMO, RKQC
+
+#ifdef USE_ODEINT
+!.... ODEINT is for REAL -- not implemented for COMPLEX yet 
+      external FHOMO, NR_CRKQC
       integer :: nbad, nok
 #else
-!.... RK4 works
-      complex, external :: inprod
+!.... RK4 works for COMPLEX 
       external FHOMO
 #endif
 
@@ -110,12 +110,12 @@
 
         do m = 1, n-r
 #ifdef USE_ODEINT
-          write(*,*) "Using ODEINT..."
+          write(*,*) "Using experimental NR_CODEINT..."
           do i = 1, n
             Utemp(i) = U(i,m,k-1)
           end do
-          call ODEINT(Utemp,n,t-h,t,1.E-5,h/2.0,1.e-20,nok,nbad, &
-                      FHOMO,RKQC)
+          call NR_CODEINT(Utemp,n,t-h,t,1.E-5,h/2.0,1.e-20,nok,nbad, &
+                          FHOMO,NR_CRKQC)
           write (*,*) k, nok, nbad
           do i = 1, n
             U(i,m,k) = Utemp(i)
