@@ -35,8 +35,11 @@
 
        call initial( Ui, ic )
 
+       write(*,*) "Ui = ", Ui(:,:)
+
        lwork = 2 * ic
-       allocate( A(ic,ic), work(lwork), rwork(lwork), eval(ic), evec(ic,ic) )
+       allocate( A(ic,ic), work(lwork), rwork(lwork), eval(ic), &
+                 evec(ic,ic) )
 
 !.... Begin the eigenvalue iteration loop
 
@@ -52,14 +55,19 @@
          call conte( ny-1, tol, neq, ic, Ui, Uf, ymax, zero, ievec, &
                      parder, BC, efun )
 
+         write(*,*) "Uf = ", Uf(:,:)
+
 !.... form the boundary condition matrix for an isothermal wall
 
          A(:,:) = Uf(2:5,1:ic)
 
 !.... compute the eigenvalues (only) of A and select the minimum eval
 
+         write(*,*) "Calling [CZ]EEV: ic = ",ic
+         write(*,*) "A = ", A(:,:)
          call CGEEV('N', 'N', ic, A, ic, eval, evec, &
                     ic, evec, ic, work, lwork, rwork, info)
+         write(*,*) "Finished [CZ]EEV..."
 
          err = eval(1)
          ind = 1

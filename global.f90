@@ -15,7 +15,6 @@
 !.... flags
 
       integer :: ievec, iver, npcalc
-      bool :: multi_profile
 
 !.... solution storage
 
@@ -73,16 +72,16 @@
 !     Revised:  4-16-96
 !=============================================================================!
       interface getmat
-      	subroutine getmat(t, mu, lm, con, &
-      	                  dmu, d2mu, dlm, d2lm, dcon, d2con)
+        subroutine getmat(t, mu, lm, con, &
+                          dmu, d2mu, dlm, d2lm, dcon, d2con)
       	  real t(:), mu(:), lm(:), con(:), dmu(:), d2mu(:)
       	  real dlm(:), d2lm(:), dcon(:), d2con(:)
-      	end subroutine getmat
-      	subroutine sgetmat(t, mu, lm, con, &
-      	                   dmu, d2mu, dlm, d2lm, dcon, d2con)
+        end subroutine getmat
+        subroutine sgetmat(t, mu, lm, con, &
+                           dmu, d2mu, dlm, d2lm, dcon, d2con)
           real t, mu, lm, con, dmu, d2mu, dlm, d2lm
           real dcon, d2con
-      	end subroutine sgetmat
+        end subroutine sgetmat
       end interface
 
       end module material
