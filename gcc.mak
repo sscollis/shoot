@@ -8,20 +8,25 @@
 #==============================================================================
 NAME     = shoot
 #
+# Turn on ODEINT if desired
+#
 ifdef USE_ODEINT
+  USE_NR = 1
   DEFINES += -DUSE_ODEINT
 endif
 #
-DEBUG    =
+DEBUG    = -g
 FFLAGS   = -O2 -fdefault-real-8 -fdefault-double-8 -ffixed-line-length-120 \
-           -cpp -c -std=legacy $(DEFINES) $(DEBUG)
-F90FLAGS = -O2 -fdefault-real-8 -fdefault-double-8 -cpp $(DEFINES) -c $(DEBUG)
+           -cpp -std=legacy $(DEFINES) -ffpe-trap=invalid,zero,overflow \
+           $(DEBUG) -c
+F90FLAGS = -O2 -fdefault-real-8 -fdefault-double-8 -cpp $(DEFINES) \
+           -ffpe-trap=invalid,zero,overflow $(DEBUG) -c
 OFLAGS   = -O2 $(DEBUG) -o $(NAME)
 #LIB     = -lcomplib.sgimath /usr/people/collis/lib/bslib/bslib.a
 LIB      = -L/usr/local/opt/openblas/lib -lopenblas
 FC       = gfortran
 #
-# Currently the type of meanflow is set at build time
+# Currently the type of meanflow is set at build time (yes, this is bad...)
 #
 MEAN = mean.o
 ifdef MEAN_2D

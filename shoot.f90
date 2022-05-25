@@ -41,9 +41,21 @@
           write(*,"(/,80('-'))")
           write(*,"('Index: ',i3,10x,'s = ',1pe13.6)") iver, sl
           write(*,"(80('-'))")
+#ifdef VERBOSE
+          write(*,*) "call mean()"
+#endif
           call mean(imean, iver)
+#ifdef VERBOSE
+          write(*,*) "call solve()"
+#endif
           call solve
+#ifdef VERBOSE
+          write(*,*) "call adjsolv()"
+#endif
           call adjsolv
+#ifdef VERBOSE
+          write(*,*) "call output())"
+#endif
           call output(iout)
         end do
         close(imean)

@@ -4,7 +4,7 @@
 !=============================================================================!
        use global
        implicit none
-       
+
        integer :: ic, i, j
        complex :: Ui(neq,neq), Uf(neq,neq), BC(neq), norm
 
@@ -16,7 +16,7 @@
 
 !.... eigenvalue iteration variables
 
-       complex :: ctemp, cm1, cm2, err, errm1, errm2  
+       complex :: ctemp, cm1, cm2, err, errm1, errm2
        complex :: At, Bt, Ct, qt, fd
        real    :: fdxr, fdxi, fdyr, fdyi
 
@@ -35,7 +35,9 @@
 
        call initial( Ui, ic )
 
+#if VERBOSE >=3
        write(*,*) "Ui = ", Ui(:,:)
+#endif
 
        lwork = 2 * ic
        allocate( A(ic,ic), work(lwork), rwork(lwork), eval(ic), &
@@ -54,8 +56,9 @@
 
          call conte( ny-1, tol, neq, ic, Ui, Uf, ymax, zero, ievec, &
                      parder, BC, efun )
-
+#if VERBOSE >=3
          write(*,*) "Uf = ", Uf(:,:)
+#endif
 
 !.... form the boundary condition matrix for an isothermal wall
 
@@ -63,12 +66,15 @@
 
 !.... compute the eigenvalues (only) of A and select the minimum eval
 
+#if VERBOSE >=3
          write(*,*) "Calling [CZ]EEV: ic = ",ic
          write(*,*) "A = ", A(:,:)
+#endif
          call CGEEV('N', 'N', ic, A, ic, eval, evec, &
                     ic, evec, ic, work, lwork, rwork, info)
+#if VERBOSE >=3
          write(*,*) "Finished [CZ]EEV..."
-
+#endif
          err = eval(1)
          ind = 1
          do i = 2, ic
@@ -122,15 +128,15 @@
        write(*,"('alpha = ',1pe20.13,1x,1pe20.13)") real(alpha), aimag(alpha)
        write(*,*)
 
-!.... if converged, determine the combination of the independent solutions 
-!.... that satisfies the boundary conditions by solving an eigensystem 
+!.... if converged, determine the combination of the independent solutions
+!.... that satisfies the boundary conditions by solving an eigensystem
 !.... to determine the eigenvector cooresponding to the zero eigenvalue.
 
        A(:,:) = Uf(2:5,1:ic)
-       
+
        call CGEEV('N', 'V', ic, A, ic, eval, evec, &
                   ic, evec, ic, work, lwork, rwork, info)
-       
+
        err = eval(1)
        BC(1:ic) = evec(:,i)
        do i = 2, ic
@@ -162,7 +168,7 @@
            if ( ABS(efun(i,j)) .gt. ABS(norm) ) norm = efun(i,j)
          end do
        end do
-  
+
 !.... normalize and output the eigenfunction
 
        efun = efun / norm
@@ -179,4 +185,4 @@
        end if
 
        return
-       end
+       end subroutine solve

@@ -19,7 +19,7 @@
 !.... Other variables
 
       integer :: i, j, k, m, q, s, mi, mj, qend
-      real    :: t, tq(0:nstep), h 
+      real    :: t, tq(0:nstep), h
       complex :: B(n-r,0:nstep), Utemp(n), temp
       complex :: U(n,n-r,0:nstep), P(n-r,n-r,0:nstep), z(n,n-r)
       complex :: w(n-r), eta(n)
@@ -30,20 +30,19 @@
       real    :: aa, bb, cc, test
       logical :: norm
 
-#ifdef USE_ODEINT
-
 !.... externally defined routines
 
+#ifdef USE_ODEINT
+!.... EXPERIMENTAL -- not verified
       complex, external :: inprod
       external FHOMO, RKQC
-
-!.... Variables for ODEINT
-
       integer :: nbad, nok
 #else
+!.... RK4 works
       complex, external :: inprod
       external FHOMO
 #endif
+
 !=============================================================================!
 
 !.... initialize some variables
@@ -102,6 +101,9 @@
 !.... Integrate the homogeneous equations
 
       do k = 1, nstep
+#if VERBOSE >= 2
+        write(*,*) "Conte: k = ",k," with nstep = ",nstep
+#endif
         t = to + h*k
 
 !.... Loop thru all homogeneous solutions
@@ -119,7 +121,13 @@
             U(i,m,k) = Utemp(i)
           end do
 #else
+#if VERBOSE >=2
+          write(*,*) "Starting RK4 with k = ",k," m = ",m
+#endif
           call RK4(n, U(1,m,k-1), U(1,m,k), t-h, h, FHOMO)
+#if VERBOSE >=2
+          write(*,*) "Finished RK4 with k = ",k," m = ",m
+#endif
 #endif
         end do
 
@@ -169,8 +177,8 @@
             end do
           end do
 
-!.... Now I have the orthonormal basis in z and 
-!.... the norms in w so I can compute the P orthonormalization 
+!.... Now I have the orthonormal basis in z and
+!.... the norms in w so I can compute the P orthonormalization
 !.... matrix
 
           do j = 1, n-r
@@ -218,7 +226,7 @@
 
 !.... return the solutions at the last node
 
-#ifdef VERBOSE
+#if VERBOSE >=3
       do k = 0, nstep
         write(*,*) "k = ",k," U(:,:,k) = ", U(:,:,k)
       enddo
@@ -243,7 +251,7 @@
         do m = 1, n-r
           B(m,q-1) = 0.0
           do j = 1, n-r
-            B(m,q-1) = B(m,q-1) + P(j,m,q)*B(j,q) 
+            B(m,q-1) = B(m,q-1) + P(j,m,q)*B(j,q)
           end do
         end do
 
@@ -288,12 +296,12 @@
 !=============================================================================!
 
 !.... The analytic inner product should yield faster convergence
- 
+
       INPROD = 0.0
       do i = 1, n
         INPROD = INPROD + v1(i) * v2(i)
       end do
-      
+
       return
       end
 
@@ -303,8 +311,8 @@
 !
 !.... Perform and inner product on two complex vectors, v1 and v2
 !.... using the conjugate of the second vector
-! 
-!.... Note that this is a slightly weird definition of the 
+!
+!.... Note that this is a slightly weird definition of the
 !.... complex inner-produce
 !=============================================================================!
       implicit none
@@ -319,6 +327,6 @@
       do i = 1, n
         CINPROD = CINPROD + v1(i) * conjg(v2(i))
       end do
-      
+
       return
       end
