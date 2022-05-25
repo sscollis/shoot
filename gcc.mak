@@ -30,7 +30,7 @@ FC       = gfortran
 #
 MEAN = mean.o
 ifdef MEAN_2D
-  MEAN = mean2d.o
+  MEAN = mean_2d.o
 else
   ifdef MEAN_BL
     MEAN = mean_bl.o
