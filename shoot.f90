@@ -64,13 +64,13 @@
 
         if (npcalc .eq. 2) call exit(0)  ! don't compute nonparallel correction
 
-  !.... go back through the results and compute the non-parallel growth-rates
+!.... go back through the results and compute the non-parallel growth-rates
 
-  10    call nonpar
+   10   call nonpar
 
         call exit(0)
 
-  1000  write(*,*) 'Error reading parm.dat'
+ 1000   write(*,*) 'Error reading parm.dat'
         call exit(1)
 
         end program shoot

@@ -125,7 +125,8 @@
        endif
 
        write(*,*)
-       write(*,"('alpha = ',1pe20.13,1x,1pe20.13)") real(alpha), aimag(alpha)
+       write(*,"('alpha = ',1pe20.13,1x,1pe20.13)") real(alpha), &
+                                                    aimag(alpha)
        write(*,*)
 
 !.... if converged, determine the combination of the independent solutions
@@ -154,11 +155,11 @@
 !.... make the phase reference consistent
 
        j = ny/2
-       efun = efun / exp( im * atan2( aimag(efun(2,j)), real(efun(2,j)) ) )
+       efun = efun / exp( im * atan2(aimag(efun(2,j)),real(efun(2,j))))
 
 !.... normalize and output the eigenfunction if desired
 
-       if (.false.) then
+       if (.true.) then
 
 !.... determine the normalization factor
 
@@ -172,13 +173,13 @@
 !.... normalize and output the eigenfunction
 
        efun = efun / norm
-       open(15,file='efun.dat')
+       open(15,file='efun.out')
+       write(15,"('# alpha = ',1pe20.13,1x,1pe20.13)") alpha
        dy = ymax / real(ny-1)
        do j = 1, ny
          y = ymax - dy * real(j-1)
          write(15,"(17(1pe13.6,1x))") y, &
            (real(efun(i,j)), aimag(efun(i,j)), i = 1, neq )
-!          ((real(efun(i,j)), aimag(efun(i,j))), i = 1, neq)
        end do
        close(15)
 
