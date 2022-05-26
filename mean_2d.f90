@@ -141,11 +141,11 @@
 
   return
 
-100  write(*,"('ERROR:  reading grid.dat')")
+  100  write(*,"('ERROR:  reading grid.dat')")
   call exit(1)
-200  write(*,"('ERROR:  reading metric.dat')")
+  200  write(*,"('ERROR:  reading metric.dat')")
   call exit(1)
-300  write(*,"('ERROR:  reading mean.dat')")
+  300  write(*,"('ERROR:  reading mean.dat')")
   call exit(1)
 
   end
@@ -166,9 +166,9 @@
   integer :: idof
 !============================================================================!
   do idof = 1, ndofm
-    call SPLINE(nym, ym(1,i), vm(1,i,idof),    vms(1,idof))
-    call SPLINE(nym, ym(1,i), g1vm(1,i,idof),  g1vms(1,idof))
-    call SPLINE(nym, ym(1,i), g2vm(1,i,idof),  g2vms(1,idof))
+    call SPLINE(nym, ym(1,i),    vm(1,i,idof),    vms(1,idof))
+    call SPLINE(nym, ym(1,i),  g1vm(1,i,idof),  g1vms(1,idof))
+    call SPLINE(nym, ym(1,i),  g2vm(1,i,idof),  g2vms(1,idof))
     call SPLINE(nym, ym(1,i), g11vm(1,i,idof), g11vms(1,idof))
     call SPLINE(nym, ym(1,i), g12vm(1,i,idof), g12vms(1,idof))
     call SPLINE(nym, ym(1,i), g22vm(1,i,idof), g22vms(1,idof))
@@ -235,9 +235,9 @@
     end do
     return
   end if
-  call MSPEVAL(nym, ym(1,i), ndofm, vm(:,i,:), &
+  call MSPEVAL(nym, ym(1,i), ndofm, vm(:,i,:),    &
                vms(:,:), y, v(:))
-  call MSPEVAL(nym, ym(1,i), ndofm, g2vm(:,i,:), &
+  call MSPEVAL(nym, ym(1,i), ndofm, g2vm(:,i,:),  &
                g2vms(:,:), y, g2v(:))
   call MSPEVAL(nym, ym(1,i), ndofm, g22vm(:,i,:), &
                g22vms(:,:), y, g22v(:))
@@ -253,7 +253,7 @@
 !=============================================================================!
   KLO=1
   KHI=N
-1  if (KHI-KLO.GT.1) then
+1 if (KHI-KLO.GT.1) then
     K=(KHI+KLO) / 2
     if(X(K).GT.XL)then
       KHI=K
