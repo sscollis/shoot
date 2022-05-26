@@ -36,7 +36,8 @@
        call adjini( Ui, ic )
 
        lwork = 2 * ic
-       allocate( A(ic,ic), work(lwork), rwork(lwork), eval(ic), evec(ic,ic) )
+       allocate( A(ic,ic), work(lwork), rwork(lwork), eval(ic), &
+                 evec(ic,ic) )
 
 !.... Begin the eigenvalue iteration loop
 
@@ -62,10 +63,10 @@
 
 !.... compute the eigenvalues (only) of A and select the minimum eval
 
-      	 call CGEEV('N', 'N', ic, A, ic, eval, evec, &
-      	            ic, evec, ic, work, lwork, rwork, info)
+         call CGEEV('N', 'N', ic, A, ic, eval, evec, &
+                    ic, evec, ic, work, lwork, rwork, info)
 
-      	 err = eval(1)
+         err = eval(1)
          do i = 2, ic
            if ( abs(eval(i)) .le. abs(err) ) err = eval(i)
          end do
@@ -89,7 +90,7 @@
          else if (icount .eq. 2) then
            cm1 = alpha
            errm1 = err
-      	   fd = (err-errm2)/(alpha-cm2)
+           fd = (err-errm2)/(alpha-cm2)
            alpha = alpha - err/fd
          else
            qt = (alpha-cm1)/(cm1-cm2)
@@ -107,7 +108,7 @@
            errm2 = errm1
            errm1 = err
          end if
-      	 goto 100
+         goto 100
        end if
 
 !.... if converged, determine the combination of the independent solutions
@@ -125,10 +126,10 @@
        err = eval(1)
        BC(1:ic) = evec(:,i)
        do i = 2, ic
-      	 if ( abs(eval(i)) .le. abs(err) ) then
-      	   err = eval(i)
-      	   BC(1:ic) = evec(:,i)
-      	 end if
+         if ( abs(eval(i)) .le. abs(err) ) then
+           err = eval(i)
+           BC(1:ic) = evec(:,i)
+         end if
        end do
        deallocate( A, work, rwork, eval, evec )
 
@@ -138,35 +139,36 @@
 
 !.... make the phase reference consistent
 
-      	j = ny/2
-      	adj = adj / exp( im * atan2( aimag(adj(1,j)), real(adj(1,j)) ) )
+        j = ny/2
+        adj = adj / exp( im * atan2( aimag(adj(1,j)), real(adj(1,j)) ) )
 
 !.... normalize and output the eigenfunction if desired
 
-       if (.false.) then
+       if (efun_out) then
 
 !.... determine the normalization factor
 
-      	 norm = zero
-      	 do i = 1, ndof
-      	   do j = 1, ny
-      	     if ( ABS(adj(i,j)) .gt. ABS(norm) ) norm = adj(i,j)
-      	   end do
-      	 end do
+         norm = zero
+         do i = 1, ndof
+           do j = 1, ny
+             if ( ABS(adj(i,j)) .gt. ABS(norm) ) norm = adj(i,j)
+           end do
+         end do
 
 !.... normalize and output the eigenfunction
 
-      	 adj = adj / norm
-      	 open(15,file='adj.dat')
-      	 dy = ymax / real(ny-1)
-      	 do j = 1, ny
-      	   y = ymax - dy * real(j-1)
-      	   write(15,"(17(1pe13.6,1x))") y, &
-      	     (real(adj(i,j)), aimag(adj(i,j)), i = 1, neq)
-      	 end do
-      	 close(15)
+         adj = adj / norm
+         open(15,file='adj.out')
+         write(15,"('# alpha = ',1pe20.13,1x,1pe20.13)") alpha
+         dy = ymax / real(ny-1)
+         do j = 1, ny
+           y = ymax - dy * real(j-1)
+           write(15,"(17(1pe13.6,1x))") y, &
+             (real(adj(i,j)), aimag(adj(i,j)), i = 1, neq)
+         end do
+         close(15)
 
        end if
 
        return
-       end
+       end subroutine adjsolv

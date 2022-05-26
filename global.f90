@@ -15,6 +15,7 @@
 !.... flags
 
       integer :: ievec, iver, npcalc
+      logical :: efun_out = .true.
 
 !.... solution storage
 

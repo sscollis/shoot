@@ -159,7 +159,7 @@
 
 !.... normalize and output the eigenfunction if desired
 
-       if (.true.) then
+       if (efun_out) then
 
 !.... determine the normalization factor
 

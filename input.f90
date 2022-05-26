@@ -6,7 +6,8 @@ subroutine input
   implicit none
 
   namelist /inputparam/ mattyp, Ma, Re, Pr, ny, ymax, ievec, alphar, alphai, &
-                        betar, betai, omegar, omegai, iver, sl, npcalc
+                        betar, betai, omegar, omegai, iver, sl, npcalc, &
+                        efun_out
 !==============================================================================
 
   write (*,"('SHOOT Compressible Flow Linear Stability Solver')")
@@ -76,6 +77,11 @@ subroutine input
 
   write(*,"('Enter npcalc ==> ',$)")
   read(*,*) npcalc
+
+!.... output efunctions
+
+  write(*,"('Enter efun_out ==> ',$)")
+  read(*,*) efun_out 
 
 !.... echo input using Namelist format
 
