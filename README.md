@@ -30,4 +30,5 @@ adjoints, and include nonparallel effects.
 3. I have only tested the forward and adjoint solvers, not yet the nonparallel
    terms so please USE WITH CAUTION.
 
-S. Scott Collis
+S. Scott Collis\
+flow.physics.simulation@gmail.com
