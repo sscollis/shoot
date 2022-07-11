@@ -7,8 +7,16 @@ polished results.
 
 ## Build
 
-    ln -s gcc.mak Makefile
-    make USE_NR=1
+```bash
+ln -s gcc.mak Makefile
+make USE_NR=1
+```
+Note that there are three options in building depending on the type of
+mean flow file that you wish to use (this should really be a runtime
+option).  Set `MEAN_2D=1` to use an LNS file for the mean flow profile
+(this should be on a body-fitted mesh) and use `MEAN_BL=1` to use a BL
+file.  The default is to read the mean flow from a collection of 
+profile (note that `npost` can generate profiles from an LNS file).
 
 ## Running
 
