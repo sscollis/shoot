@@ -42,19 +42,20 @@
           write(*,"('Index: ',i3,10x,'s = ',1pe13.6)") iver, sl
           write(*,"(80('-'))")
 #ifdef VERBOSE
-          write(*,*) "call mean()"
+          write(*,'("call mean()")')
 #endif
           call mean(imean, iver)
 #ifdef VERBOSE
-          write(*,*) "call solve()"
+          write(*,'("call solve()")')
 #endif
           call solve
+          write(*,*) "Finished solve"
 #ifdef VERBOSE
-          write(*,*) "call adjsolv()"
+          write(*,'("call adjsolv()")')
 #endif
           call adjsolv
 #ifdef VERBOSE
-          write(*,*) "call output())"
+          write(*,'("call output())")')
 #endif
           call output(iout)
         end do
@@ -66,11 +67,10 @@
 
 !.... go back through the results and compute the non-parallel growth-rates
 
+        write(*,*) "starting nonpar"
    10   call nonpar
-
+        write(*,*) "finished nonpar"
         call exit(0)
-
  1000   write(*,*) 'Error reading parm.dat'
         call exit(1)
-
         end program shoot

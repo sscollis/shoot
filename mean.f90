@@ -7,7 +7,6 @@
           integer :: nym, ndofm=5, kord=3
           real, allocatable :: ym(:), vmt(:,:), g2vmt(:,:), g22vmt(:,:)
           real, allocatable :: vms(:,:), g2vms(:,:), g22vms(:,:), knot(:)
-
   end module meanflow
 
 !=============================================================================!
@@ -25,15 +24,18 @@
         use meanflow
         implicit none
 
-        integer :: imean, i
+        integer :: imean
 
 !.... local
 
-        integer :: j, k
+        integer :: i, j, k
         integer :: ier
+#if 0
         real    :: tmp
-
-        character*80 :: base, fname
+#else
+        character(256) :: tmp
+#endif
+        character(80) :: base, fname
 !=============================================================================!
 
 !.... read the mean field and spline to the new grid
@@ -49,8 +51,15 @@
 
         nym = 0
   20    continue
+#if 0
         read(imean,*,end=30) tmp
         nym = nym + 1
+#else
+        read(imean,'(a)',end=30) tmp
+        if (tmp(1:1).ne.'#') then
+          nym = nym + 1
+        endif
+#endif
         goto 20
   30    continue
         rewind(imean)
@@ -70,10 +79,21 @@
           write(*,"('ERROR:  allocating mean field')")
           call exit(1)
         end if
-
+#if 0
         do j = 1, nym
-          read(imean,*) ym(j), ( vmt(j,k), k = 1, ndofm )
+          read(imean,*) ym(j), (vmt(j,k), k=1,ndofm)
         end do
+#else
+        j = 1
+ 40     continue
+        read (imean,'(a)',end=50) tmp
+        if (tmp(1:1).ne.'#') then
+          read(tmp,*) ym(j), (vmt(j,k), k=1,ndofm)
+          j = j + 1
+        endif
+        goto 40
+ 50     continue
+#endif
         close(imean)
 
 #ifdef USE_BSLIB
@@ -97,12 +117,24 @@
         base = 'first'
         call makename(base,i,fname)
 #if VERBOSE
-  write(*,"('Reading profile ',a)") fname
+        write(*,"('Reading profile ',a)") fname
 #endif
         open(imean, file=fname, form='formatted', status='old', err=1010)
+#if 0
         do j = 1, nym
-          read(imean,*) ym(j), ( g2vmt(j,k), k = 1, ndofm )
+          read(imean,*) ym(j), (g2vmt(j,k), k=1,ndofm)
         end do
+#else
+        j = 1
+ 60     continue
+        read (imean,'(a)',end=70) tmp
+        if (tmp(1:1).ne.'#') then
+          read(tmp,*) ym(j), (g2vmt(j,k), k=1,ndofm)
+          j = j + 1
+        endif
+        goto 60
+ 70     continue
+#endif
         close(imean)
 
 #ifdef USE_BSLIB
@@ -124,12 +156,24 @@
         base = 'second'
         call makename(base,i,fname)
 #if VERBOSE
-  write(*,"('Reading profile ',a)") fname
+        write(*,"('Reading profile ',a)") fname
 #endif
         open(imean, file=fname, form='formatted', status='old', err=1020)
+#if 0
         do j = 1, nym
           read(imean,*) ym(j), ( g22vmt(j,k), k = 1, ndofm )
         end do
+#else
+        j = 1
+ 80     continue
+        read (imean,'(a)',end=90) tmp
+        if (tmp(1:1).ne.'#') then
+          read(tmp,*) ym(j), (g22vmt(j,k), k=1,ndofm)
+          j = j + 1
+        endif
+        goto 80
+ 90     continue
+#endif
         close(imean)
 
 #if USE_BSLIB
@@ -145,11 +189,8 @@
         call SPLINE(nym, ym, g22vmt(1,4), g22vms(1,4))
         call SPLINE(nym, ym, g22vmt(1,5), g22vms(1,5))
 #endif
-
         return
-
     10  format(8(1pe13.6,1x))
-
   1000  write(*,"('ERROR:  reading profile')")
         call exit(1)
   1010  write(*,"('ERROR:  reading first')")

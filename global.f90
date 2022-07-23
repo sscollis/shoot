@@ -75,8 +75,8 @@
       interface getmat
         subroutine getmat(t, mu, lm, con, &
                           dmu, d2mu, dlm, d2lm, dcon, d2con)
-      	  real t(:), mu(:), lm(:), con(:), dmu(:), d2mu(:)
-      	  real dlm(:), d2lm(:), dcon(:), d2con(:)
+          real t(:), mu(:), lm(:), con(:), dmu(:), d2mu(:)
+          real dlm(:), d2lm(:), dcon(:), d2con(:)
         end subroutine getmat
         subroutine sgetmat(t, mu, lm, con, &
                            dmu, d2mu, dlm, d2lm, dcon, d2con)

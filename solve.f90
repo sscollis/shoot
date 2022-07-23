@@ -53,7 +53,9 @@
          icount = icount + 1
 
 !.... integrate the equations using orthonomalization
-
+#if VERBOSE >=3
+         write(*,*) "Starting Conte integration"
+#endif
          call conte( ny-1, tol, neq, ic, Ui, Uf, ymax, zero, ievec, &
                      parder, BC, efun )
 #if VERBOSE >=3
@@ -69,6 +71,7 @@
 #if VERBOSE >=3
          write(*,*) "Calling [CZ]EEV: ic = ",ic
          write(*,*) "A = ", A(:,:)
+         write(*,*) "CGEEV"
 #endif
          call CGEEV('N', 'N', ic, A, ic, eval, evec, &
                     ic, evec, ic, work, lwork, rwork, info)
@@ -135,6 +138,7 @@
 
        A(:,:) = Uf(2:5,1:ic)
 
+!      write(*,*) "2: CGEEV"
        call CGEEV('N', 'V', ic, A, ic, eval, evec, &
                   ic, evec, ic, work, lwork, rwork, info)
 

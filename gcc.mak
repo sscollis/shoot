@@ -16,13 +16,12 @@ ifdef USE_ODEINT
 endif
 #
 DEBUG    = -g
+#TRAP     = -ffpe-trap=invalid,zero,overflow 
 FFLAGS   = -O2 -fdefault-real-8 -fdefault-double-8 -ffixed-line-length-120 \
-           -cpp -std=legacy $(DEFINES) -ffpe-trap=invalid,zero,overflow \
-           $(DEBUG) -c
+           -cpp -std=legacy $(DEFINES) $(TRAP) $(DEBUG) -c
 F90FLAGS = -O2 -fdefault-real-8 -fdefault-double-8 -cpp $(DEFINES) \
-           -ffpe-trap=invalid,zero,overflow $(DEBUG) -c
+           $(TRAP) $(DEBUG) -c
 OFLAGS   = -O2 $(DEBUG) -o $(NAME)
-#LIB     = -lcomplib.sgimath /usr/people/collis/lib/bslib/bslib.a
 LIB      = -L/usr/local/opt/openblas/lib -lopenblas
 FC       = gfortran
 #

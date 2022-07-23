@@ -176,7 +176,7 @@ subroutine nonpar
 
 !.... find the maximum magnitude of the u-velocity eigenfunction
 
-#ifdef IMSL
+!#ifdef IMSL
         emax = 0
         nbs  = ny
         allocate( yknot(nbs+kyord), bs(nbs) )
@@ -187,11 +187,9 @@ subroutine nonpar
             if ( abs(q(2,j-1,i)) .lt. abs(q(2,j,i)) ) goto 30
           end do
 30          yumax = rtsafe( fumax, y(j-2), y(j+2), 1.0e-14 )
-
 #ifdef DEBUG
           write(*,"(2(1pe13.6,1x))") x(i), yumax
 #endif
-
           do idof = 2, 4
             call BSINT( nbs, y, real(q(idof,:,i)), kyord, yknot, bs )
             umaxr = BSDER( 0, yumax, kyord, yknot, nbs, bs )
@@ -201,7 +199,7 @@ subroutine nonpar
           end do
         end do
         deallocate( yknot, bs )
-#endif
+!#endif
 
 !.... compute the streamwise derivative of the disturbance kinetic energy
 
@@ -270,6 +268,7 @@ subroutine nonpar
             wn(idof) =  real(alpha(i)) - aimag(h2/h1) + &
                         aimag(demax(idof,i) / emax(idof,i))
           end do
+
 !=============================================================================
 !.... output the results
 !=============================================================================
@@ -323,7 +322,6 @@ subroutine nonpar
           write(27,10) x(i), real(q(2,j,i)), aimag(q(2,j,i)), abs(q(2,j,i)), &
                              real(a(2,j,i)), aimag(a(2,j,i)), abs(a(2,j,i))
 #endif
-
         end do                ! loop on i
 
         deallocate( x, y, alpha, beta, omega, dalphadx )
@@ -353,13 +351,13 @@ subroutine fumax( x, g, d )
   real :: x, f, g, d
 !=============================================================================!
 
-#ifdef IMSL
+!#ifdef IMSL
   f = BSDER( 0, x, kyord, yknot, nbs, bs(:) )
   g = BSDER( 1, x, kyord, yknot, nbs, bs(:) )
   d = BSDER( 2, x, kyord, yknot, nbs, bs(:) )
-#else
-  write(*,*) "ERROR:  IMSL BSDER is not available for fumax"
-#endif
+!#else
+!  write(*,*) "ERROR:  IMSL BSDER is not available for fumax"
+!#endif
 
   return
 end subroutine fumax

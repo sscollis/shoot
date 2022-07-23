@@ -68,6 +68,8 @@
       U = 0.0
       U(:,1:(n-r),k) = yo(:,1:(n-r))
 
+!     write(*,*) "1:  I am here..."
+
 !.... Gram-Schmidt
 
       w(1) = SQRT( inprod(n, U(1,1,k), U(1,1,k)) )
@@ -90,6 +92,8 @@
         end do
       end do
 
+!     write(*,*) "2: I am here..."
+
 !.... Now update the U matrix with the orthonormal values
 
       do i = 1, n
@@ -99,6 +103,8 @@
       end do
 
 !.... Integrate the homogeneous equations
+
+!     write(*,*) "3: I am here..."
 
       do k = 1, nstep
 #if VERBOSE >= 2
