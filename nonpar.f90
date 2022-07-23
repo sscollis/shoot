@@ -1,12 +1,9 @@
 !=============================================================================!
 module bspline
-
-        integer           :: nbs, kyord = 5
-        real, allocatable :: yknot(:)
-        real, allocatable :: bs(:)
-
-        real, external :: bsder
-
+  integer           :: nbs, kyord = 5
+  real, allocatable :: yknot(:)
+  real, allocatable :: bs(:)
+  real, external :: bsder
 end module bspline
 
 !=============================================================================!
@@ -50,6 +47,10 @@ subroutine nonpar
         character(80) :: base, fname
 
         integer :: iin=12, iout=13
+
+        real, allocatable :: ty(:)
+        complex, allocatable :: tq(:,:,:)
+
 !=============================================================================!
 
         write(*,"(/,'Computing nonparallel correction...',/)")
@@ -77,6 +78,8 @@ subroutine nonpar
         allocate( c1(ny,nx), c2(ny,nx), c3(ny,nx), z1(ndof,ny,nx), &
                   z2(ndof,ny,nx), z3(ndof,ny,nx), emax(ndof,nx), &
                   demax(ndof,nx) )
+
+!.... Note that y is decreasing here
 
         dy = ymax / real(ny-1)
         do j = 1, ny
@@ -176,30 +179,38 @@ subroutine nonpar
 
 !.... find the maximum magnitude of the u-velocity eigenfunction
 
-!#ifdef IMSL
+#ifdef IMSL
+!.... need to switch around y and q for SLATEC versions of splines
+        allocate(ty(ny), tq(ndof,ny,nx))
+        do j = 1, ny
+          ty(j) = y(ny-j+1)
+          tq(:,j,:) = q(:,ny-j+1,:)
+        enddo
         emax = 0
         nbs  = ny
         allocate( yknot(nbs+kyord), bs(nbs) )
-        call BSNAK( nbs, y, kyord, yknot )
+        call BSNAK( nbs, ty, kyord, yknot )
         do i = 1, nx
-          call BSINT( nbs, y, abs(q(2,:,i)), kyord, yknot, bs )
-          do j = ny,2,-1
-            if ( abs(q(2,j-1,i)) .lt. abs(q(2,j,i)) ) goto 30
+          call BSINT( nbs, ty, abs(tq(2,:,i)), kyord, yknot, bs )
+          do j = 1, ny-1 
+            if ( abs(tq(2,j+1,i)) .lt. abs(tq(2,j,i)) ) goto 30
           end do
-30          yumax = rtsafe( fumax, y(j-2), y(j+2), 1.0e-14 )
+30        continue
+          yumax = rtsafe( fumax, ty(j-2), ty(j+2), 1.0e-14 )
 #ifdef DEBUG
           write(*,"(2(1pe13.6,1x))") x(i), yumax
 #endif
           do idof = 2, 4
-            call BSINT( nbs, y, real(q(idof,:,i)), kyord, yknot, bs )
+            call BSINT( nbs, ty, real(tq(idof,:,i)), kyord, yknot, bs )
             umaxr = BSDER( 0, yumax, kyord, yknot, nbs, bs )
-            call BSINT( nbs, y, aimag(q(idof,:,i)), kyord, yknot, bs )
+            call BSINT( nbs, ty, aimag(tq(idof,:,i)), kyord, yknot, bs )
             umaxi = BSDER( 0, yumax, kyord, yknot, nbs, bs )
             emax(idof,i) = cmplx(umaxr,umaxi)
           end do
         end do
         deallocate( yknot, bs )
-!#endif
+        deallocate( ty, tq )
+#endif
 
 !.... compute the streamwise derivative of the disturbance kinetic energy
 
@@ -344,20 +355,18 @@ end subroutine nonpar
 !=============================================================================!
 subroutine fumax( x, g, d )
 !
-!        Find the (local) maximum of a bsplined function
+!  Find the (local) maximum of a bsplined function
 !
 !=============================================================================!
   use bspline
   real :: x, f, g, d
 !=============================================================================!
-
-!#ifdef IMSL
+#ifdef IMSL
   f = BSDER( 0, x, kyord, yknot, nbs, bs(:) )
   g = BSDER( 1, x, kyord, yknot, nbs, bs(:) )
   d = BSDER( 2, x, kyord, yknot, nbs, bs(:) )
-!#else
-!  write(*,*) "ERROR:  IMSL BSDER is not available for fumax"
-!#endif
-
+#else
+  write(*,*) "ERROR:  IMSL BSDER is not available for fumax"
+#endif
   return
 end subroutine fumax

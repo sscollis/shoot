@@ -141,11 +141,11 @@
 
   return
 
-  100  write(*,"('ERROR:  reading grid.dat')")
+  100  write(*,"('ERROR:  reading lstx.dat')")
   call exit(1)
-  200  write(*,"('ERROR:  reading metric.dat')")
+  200  write(*,"('ERROR:  reading lstm.dat')")
   call exit(1)
-  300  write(*,"('ERROR:  reading mean.dat')")
+  300  write(*,"('ERROR:  reading lstq.dat')")
   call exit(1)
 
   end

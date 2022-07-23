@@ -34,7 +34,7 @@
   integer :: ier
   real    :: tmp
 
-  character*80 :: base, fname
+  character(80) :: base, fname
 !=============================================================================!
 
 !.... read the mean field and spline to the new grid

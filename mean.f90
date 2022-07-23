@@ -176,7 +176,7 @@
 #endif
         close(imean)
 
-#if USE_BSLIB
+#ifdef USE_BSLIB
         call BSINT( nym, ym, g22vmt(1,1), kord, knot, g22vms(1,1) )
         call BSINT( nym, ym, g22vmt(1,2), kord, knot, g22vms(1,2) )
         call BSINT( nym, ym, g22vmt(1,3), kord, knot, g22vms(1,3) )
@@ -237,8 +237,25 @@ subroutine getmean( i, y, v, g1v, g2v, g11v, g12v, g22v )
 #else
 
 #ifdef USE_BSLIB
-  write(*,*) "WARNING:  USE_BSLIB not currently implemented in getmean"
-  call exit(1)
+  if ( y .gt. ym(nym) ) then
+    do idof = 1, ndofm
+      v(idof)    =    vm(nym,idof)
+      g1v(idof)  =  g1vm(nym,idof)
+      g2v(idof)  =  g2vm(nym,idof)
+      g11v(idof) = g11vm(nym,idof)
+      g12v(idof) = g12vm(nym,idof)
+      g22v(idof) = g22vm(nym,idof)
+    end do
+    return
+  end if
+  do idof = 1, ndofm
+    v(idof)    = BSVAL( y, kord, knot, nym, vms(1,idof) ) 
+    g1v(idof)  = BSVAL( y, kord, knot, nym, g1vms(1,idof) ) 
+    g2v(idof)  = BSVAL( y, kord, knot, nym, g2vms(1,idof) ) 
+    g11v(idof) = BSVAL( y, kord, knot, nym, g11vms(1,idof) ) 
+    g12v(idof) = BSVAL( y, kord, knot, nym, g12vms(1,idof) ) 
+    g22v(idof) = BSVAL( y, kord, knot, nym, g22vms(1,idof) ) 
+  enddo
 #else
   if ( y .gt. ym(nym) ) then
     do idof = 1, ndofm
@@ -261,7 +278,6 @@ subroutine getmean( i, y, v, g1v, g2v, g11v, g12v, g22v )
   enddo
 #endif
 #endif
-
   return
 end subroutine getmean
 
