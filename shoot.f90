@@ -50,7 +50,7 @@
           write(*,'("call solve()")')
 #endif
           call solve
-          write(*,*) "Finished solve"
+          !write(*,*) "Finished solve"
 #ifdef VERBOSE
           write(*,'("call adjsolv()")')
 #endif
