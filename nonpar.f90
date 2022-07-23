@@ -302,7 +302,7 @@ subroutine nonpar
 !
 !     1.   parallel wavenumber
 !     2.   nonparallel correction
-!     3-8. component data (ussually interested in the streamwise component
+!     3-8. component data (usually interested in the streamwise component
 
           write(21,10) x(i), real(alpha(i)), -aimag(h2/h1), &
                        aimag(demax(2,i)/emax(2,i)), wn(2),    &

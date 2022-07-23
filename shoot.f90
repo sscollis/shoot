@@ -21,6 +21,7 @@
 
 !.... read the station information
 
+        write(*,'("Reading station information from parm.dat")') 
         open(iparm,file='parm.dat',status='old',err=1000)
         read(iparm,*,err=1000) nx
 
@@ -67,9 +68,9 @@
 
 !.... go back through the results and compute the non-parallel growth-rates
 
-        write(*,*) "starting nonpar"
+        !write(*,*) "starting nonpar"
    10   call nonpar
-        write(*,*) "finished nonpar"
+        !write(*,*) "finished nonpar"
         call exit(0)
  1000   write(*,*) 'Error reading parm.dat'
         call exit(1)
