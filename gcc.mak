@@ -16,25 +16,20 @@ ifdef USE_ODEINT
 endif
 #
 DEBUG    = -g
-#TRAP     = -ffpe-trap=invalid,zero,overflow 
+#TRAP    = -ffpe-trap=invalid,zero,overflow 
 FFLAGS   = -O2 -fdefault-real-8 -fdefault-double-8 -ffixed-line-length-120 \
            -cpp -std=legacy $(DEFINES) $(TRAP) $(DEBUG) -c
 F90FLAGS = -O2 -fdefault-real-8 -fdefault-double-8 -cpp $(DEFINES) \
            $(TRAP) $(DEBUG) -c
-OFLAGS   = -O2 $(DEBUG) -o $(NAME)
+OFLAGS   = -O2 $(DEBUG) 
 LIB      = -L/usr/local/opt/openblas/lib -lopenblas
 FC       = gfortran
 #
-# Currently the type of meanflow is set at build time (yes, this is bad...)
+# Three different ways to read and work with mean flow
 #
 MEAN = mean.o
-ifdef MEAN_2D
-  MEAN = mean_2d.o
-else
-  ifdef MEAN_BL
-    MEAN = mean_bl.o
-  endif
-endif
+MEAN2D = mean-2d.o
+MEANBL = mean-bl.o
 
 .SUFFIXES: .f90
 
@@ -43,7 +38,7 @@ MODS = global.o stencils.o
 OBJECTS = shoot.o matrix.o input.o getmat.o makename.o spline.o \
 initial.o calch.o solve.o adjsolv.o adjini.o output.o parallel.o
 
-OBJS1 = conte.o parder.o adjder.o $(MEAN) rk4.o bslib1.o bslib2.o
+OBJS1 = conte.o parder.o adjder.o rk4.o bslib1.o bslib2.o
 #
 # Use Numerical-Recepies only if you have a valid license
 #
@@ -61,8 +56,16 @@ OBJS2 = grad.o grad2.o g1.o
 
 OBJS3 = nonpar.o
 
-$(NAME): $(MODS) $(OBJECTS) $(OBJS1) $(OBJS2) $(OBJS3)
-	$(FC) $(OFLAGS) $(MODS) $(OBJECTS) $(OBJS1) $(OBJS2) $(OBJS3) $(LIB)
+all: $(NAME) $(NAME)-2d $(NAME)-bl 
+
+$(NAME): $(MODS) $(OBJECTS) $(OBJS1) $(MEAN) $(OBJS2) $(OBJS3)
+	$(FC) $(OFLAGS) $(MODS) $(OBJECTS) $(MEAN) $(OBJS1) $(OBJS2) $(OBJS3) $(LIB) -o $(NAME)
+
+$(NAME)-2d: $(MODS) $(OBJECTS) $(OBJS1) $(MEAN2D) $(OBJS2) $(OBJS3)
+	$(FC) $(OFLAGS) $(MODS) $(OBJECTS) $(MEAN2D) $(OBJS1) $(OBJS2) $(OBJS3) $(LIB) -o $(NAME)-2d
+
+$(NAME)-bl: $(MODS) $(OBJECTS) $(OBJS1) $(MEANBL) $(OBJS2) $(OBJS3)
+	$(FC) $(OFLAGS) $(MODS) $(OBJECTS) $(MEANBL) $(OBJS1) $(OBJS2) $(OBJS3) $(LIB) -o $(NAME)-bl 
 
 $(OBJECTS): global.o
 	$(FC) $(F90FLAGS) $*.f90
