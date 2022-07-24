@@ -32,4 +32,6 @@
 *.app
 
 shoot
+shoot-2d
+shoot-bl
 Makefile
