@@ -50,7 +50,6 @@
           write(*,'("call solve()")')
 #endif
           call solve
-          !write(*,*) "Finished solve"
 #ifdef VERBOSE
           write(*,'("call adjsolv()")')
 #endif
@@ -68,9 +67,8 @@
 
 !.... go back through the results and compute the non-parallel growth-rates
 
-        !write(*,*) "starting nonpar"
    10   call nonpar
-        !write(*,*) "finished nonpar"
+
         call exit(0)
  1000   write(*,*) 'Error reading parm.dat'
         call exit(1)

@@ -5,8 +5,8 @@ subroutine input
   use material
   implicit none
 
-  namelist /inputparam/ mattyp, Ma, Re, Pr, ny, ymax, ievec, alphar, alphai, &
-                        betar, betai, omegar, omegai, iver, sl, npcalc, &
+  namelist /inputparam/ mattyp, Ma, Re, Pr, ny, ymax, ievec, &
+                        betar, betai, omegar, omegai, npcalc, &
                         efun_out
 !==============================================================================
 
@@ -49,8 +49,10 @@ subroutine input
   write (*,"('Compute eigenfuntions (0/1) ==> ',$)")
   read (*,*) ievec
 
-  write (*,"('Enter alphar, alphai ==> ',$)")
-  read (*,*) alphar, alphai
+  !write (*,"('Enter alphar, alphai ==> ',$)")
+  !read (*,*) alphar, alphai
+  alphar = 0
+  alphai = 0
   write (*,"('Enter betar, betai ==> ',$)")
   read (*,*) betar, betai
   write (*,"('Enter omegar, omegai ==> ',$)")
@@ -65,11 +67,13 @@ subroutine input
 !.... These two variables are now read from the parm.dat file
 !.... along with alphar, alphai
 
-  write (*,"('Enter profile index ==> ',$)")
-  read (*,*) iver
+  iver = 0
+  !write (*,"('Enter profile index ==> ',$)")
+  !read (*,*) iver
 
-  write(*,"('Enter s (-1 = no curvature) ==> ',$)")
-  read(*,*) sl
+  sl = 0
+  !write(*,"('Enter s (-1 = no curvature) ==> ',$)")
+  !read(*,*) sl
 
 !.... npcalc = 0   -->  polish eigenvalues, solve adjoint, compute nonparallel
 !.... npcalc = 1   -->  compute nonparallel terms assuming output.dat is avail
