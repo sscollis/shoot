@@ -13,7 +13,7 @@
 
       integer :: nstep, n, r
       real    :: tol, to, tf
-      complex :: yo(n,n), yf(n,n), bc(n), y(n,0:nstep)
+      complex :: yo(n,n), yf(n,n), BC(n), y(n,0:nstep)
       integer :: eigfun
 
 !.... Other variables
@@ -21,7 +21,8 @@
       integer :: i, j, k, m, q, s, mi, mj, qend
       real    :: t, tq(0:nstep), h
       complex :: B(n-r,0:nstep), Utemp(n), temp
-      complex :: U(n,n-r,0:nstep), P(n-r,n-r,0:nstep), z(n,n-r)
+      !complex :: U(n,n-r,0:nstep), P(n-r,n-r,0:nstep), z(n,n-r)
+      complex,allocatable :: U(:,:,:), P(:,:,:), z(:,:)
       complex :: w(n-r), eta(n)
       complex :: ut(n,n-r)
 
@@ -44,6 +45,8 @@
 #endif
 
 !=============================================================================!
+
+      allocate( U(n,n-r,0:nstep), P(n-r,n-r,0:nstep), z(n,n-r) )
 
 !.... initialize some variables
 
@@ -68,7 +71,7 @@
       U = 0.0
       U(:,1:(n-r),k) = yo(:,1:(n-r))
 
-!     write(*,*) "1:  I am here..."
+      !write(*,*) "1:  I am here..."
 
 !.... Gram-Schmidt
 
@@ -92,7 +95,7 @@
         end do
       end do
 
-!     write(*,*) "2: I am here..."
+      !write(*,*) "2: I am here..."
 
 !.... Now update the U matrix with the orthonormal values
 
@@ -104,7 +107,7 @@
 
 !.... Integrate the homogeneous equations
 
-!     write(*,*) "3: I am here..."
+      !write(*,*) "3: I am here..."
 
       do k = 1, nstep
 #if VERBOSE >= 2
@@ -136,6 +139,8 @@
 #endif
 #endif
         end do
+
+        !write(*,*) "4: I am here..."
 
 !.... Test to see if normalization is required
 
@@ -230,6 +235,8 @@
         end if     ! norm
       end do       ! nstep
 
+      !write(*,*) "5: I am here..."
+
 !.... return the solutions at the last node
 
 #if VERBOSE >=3
@@ -245,7 +252,9 @@
 
       if (eigfun.eq.1) then
 
-        B(:,q) = BC
+        !B(:,q) = BC  ! SSC:  B(n-r,:) whereas BC(n), what to do?
+        !B(:,q) = BC(r+1:n)
+        B(:,q) = BC(1:n-r)
 
         do i = 1, n
           y(i,nstep) = 0.0
@@ -282,6 +291,10 @@
 
       end if    ! eigfun
 
+      !write(*,*) "6: I am here..."
+     
+      deallocate( U, P, z )
+ 
       return
       end
 

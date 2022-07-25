@@ -17,15 +17,16 @@
 
         real, external :: xloc, yloc
 
-        real :: xl, yl, th, bn1, bn2, dxdy, dydx, dxbds, dybds, dx, dy, &
-                ddxdx, ddydx, ddxdy, ddydy, d2dxdx2, d2dydx2, d2dxdy2,  &
-                d2dydy2, dbn1, dbn2, d2xdy2, d2ydx2, d2xbds2, d2ybds2,  &
+        real :: xl, yl, th, bn1, bn2, dxdy, dydx, dxbds, dybds, dx, dy,&
+                ddxdx, ddydx, ddxdy, ddydy, d2dxdx2, d2dydx2, d2dxdy2, &
+                d2dydy2, dbn1, dbn2, d2xdy2, d2ydx2, d2xbds2, d2ybds2, &
                 d2bn1, d2bn2
 
         real :: a(n), b(n), dads(n), dbds(n)
 
         real, parameter :: zero = 0.0, pt5 = 0.5, one = 1.0, onept5 = 1.5, &
-                           two = 2.0,  twopt5 = 2.5, three = 3.0, infty = 1.0e30
+                           two = 2.0,  twopt5 = 2.5, three = 3.0, &
+                           infty = 1.0e30
 !==============================================================================
 !       write(*,"('Caldh:  s = ',e13.6)") s
 

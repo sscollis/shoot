@@ -58,7 +58,7 @@
 	end if
       end do
 
-      write(*,*) "adjini deallocate"
+      !write(*,*) "adjini deallocate"
       deallocate( work, rwork )
 
       return

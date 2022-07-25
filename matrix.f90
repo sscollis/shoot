@@ -44,7 +44,7 @@
 
 	real :: S1jj, S2jj, S3jj, S(nsd,nsd), Lapt
 
-	real :: fact
+	real :: fact, lsl
 
 !.... metrics for the curved wall
 
@@ -70,7 +70,13 @@
 
 !.... compute the curvature metrics
 
-	call calch( sl, 1, y, h, dhds, dhdr, dhdsr, dhdrr )
+       if (curve.eq.0) then
+         lsl = -one
+       else
+         lsl = sl
+       endif
+
+	call calch( lsl, 1, y, h, dhds, dhdr, dhdsr, dhdrr )
 
 	hinv  = one / h
 	hinv2 = hinv**2

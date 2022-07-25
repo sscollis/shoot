@@ -7,7 +7,7 @@ subroutine input
 
   namelist /inputparam/ mattyp, Ma, Re, Pr, ny, ymax, ievec, &
                         betar, betai, omegar, omegai, npcalc, &
-                        efun_out
+                        efun_out, maxIter, curve
 !==============================================================================
 
   write (*,"('SHOOT Compressible Flow Linear Stability Solver')")
@@ -74,6 +74,9 @@ subroutine input
   sl = 0
   !write(*,"('Enter s (-1 = no curvature) ==> ',$)")
   !read(*,*) sl
+  
+  write(*,"('Use curvative (0/1)  ==> ',$)")
+  read(*,*) curve 
 
 !.... npcalc = 0   -->  polish eigenvalues, solve adjoint, compute nonparallel
 !.... npcalc = 1   -->  compute nonparallel terms assuming output.dat is avail

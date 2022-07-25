@@ -11,6 +11,7 @@
       integer :: ny
       integer :: ndof = 5, neq = 8, nsd = 3
       real    :: ymax
+      integer :: maxIter = 20
 
 !.... flags
 
@@ -27,6 +28,7 @@
       complex :: alpha, beta, omega
       real    :: alphar, alphai, betar, betai, omegar, omegai
       real    :: sl
+      integer :: curve=1
 
 !.... flow constants
 

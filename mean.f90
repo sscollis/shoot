@@ -70,12 +70,11 @@
 !.... allocate room for the profile data
 
         if ( allocated(ym) ) then
-          write(*,*) "mean deallocate"
           deallocate( ym, vmt, vms, g2vmt, g2vms, g22vmt, g22vms )
         end if
         allocate( ym(nym), vmt(nym,ndofm), vms(nym,ndofm), &
-            g2vmt(nym,ndofm), g2vms(nym,ndofm), &
-            g22vmt(nym,ndofm), g22vms(nym,ndofm), STAT=ier )
+                  g2vmt(nym,ndofm), g2vms(nym,ndofm), &
+                  g22vmt(nym,ndofm), g22vms(nym,ndofm), STAT=ier )
         if (ier .ne. 0) then
           write(*,"('ERROR:  allocating mean field')")
           call exit(1)
@@ -98,6 +97,7 @@
         close(imean)
 
 #ifdef USE_BSLIB
+        if (allocated(knot) deallocate(knot)
         allocate( knot(nym+kord) )
         call BSNAK( nym, ym, kord, knot)
         call BSINT( nym, ym, vmt(1,1), kord, knot, vms(1,1) )
@@ -221,9 +221,11 @@ subroutine getmean( i, y, v, g1v, g2v, g11v, g12v, g22v )
   if (first_time) then
     first_time = .false.
     write(*,*)
-    write(*,"('WARNING:  getmean is not supported for 2d profile list')")
-    write(*,"('          Using parallel flow approximation, so that')")
-    write(*,"('          nonparallel terms should be identically zero')")
+    write(*,"('WARNING:  getmean (i.e. general mean flow) is not      ')")
+    write(*,"('          supported for 2d profile list.               ')")
+    write(*,"('          Using parallel flow approximation, so that   ')")
+    write(*,"('          nonparallel terms should be identically zero.')")
+    write(*,"('          Full nonparallel effect must use shoot-2d.   ')")
   endif
 
   call getmeanp( i, y, v, g2v, g22v )

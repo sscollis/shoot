@@ -69,6 +69,8 @@
 
    10   call nonpar
 
+        deallocate( efun, adj )
+
         call exit(0)
  1000   write(*,*) 'Error reading parm.dat'
         call exit(1)

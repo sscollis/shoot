@@ -193,10 +193,19 @@ subroutine nonpar
         do i = 1, nx
           call BSINT( nbs, ty, abs(tq(2,:,i)), kyord, yknot, bs )
           do j = 1, ny-1 
-            if ( abs(tq(2,j+1,i)) .lt. abs(tq(2,j,i)) ) goto 30
+            if ( abs(tq(2,j+1,i)) .lt. abs(tq(2,j,i)) .and. j.gt.1 ) goto 30
           end do
 30        continue
-          yumax = rtsafe( fumax, ty(j-2), ty(j+2), 1.0e-14 )
+#ifdef DEBUG 
+          write(*,*) "i=",i," j=",j,"abs(q(2,1,i))=",abs(tq(2,1,i))
+          write(*,*) "abs(q(2,j+1,i))=",abs(tq(2,j+1,i))
+          write(*,*) "abs(q(2,j,i))=",abs(tq(2,j,i))
+#endif
+          if (j.gt.1) then
+            yumax = rtsafe( fumax, ty(j-1), ty(j+1), 1.0e-14 )
+          else
+            yumax = rtsafe( fumax, ty(j), ty(j+1), 1.0e-14 )
+          endif
 #ifdef DEBUG
           write(*,"(2(1pe13.6,1x))") x(i), yumax
 #endif
@@ -208,7 +217,7 @@ subroutine nonpar
             emax(idof,i) = cmplx(umaxr,umaxi)
           end do
         end do
-        write(*,*) "nonpar deallocate"
+        !write(*,*) "nonpar deallocate"
         deallocate( yknot, bs )
         deallocate( ty, tq )
 #endif
@@ -336,7 +345,7 @@ subroutine nonpar
 #endif
         end do                ! loop on i
 
-        write(*,*) "nonpar 2 deallocate"
+        !write(*,*) "nonpar 2 deallocate"
         deallocate( x, y, alpha, beta, omega, dalphadx )
         deallocate( q, dqdy, dqdx, dqdxy, a, ke, ind )
         deallocate( c1, c2, c3, z1, z2, z3, emax, demax )

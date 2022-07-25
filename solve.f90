@@ -29,6 +29,8 @@
        complex, allocatable :: work(:), eval(:), evec(:,:)
        real, allocatable    :: rwork(:)
 !=============================================================================!
+       mcount = maxIter
+
        BC = zero
 
 !.... compute the initial condition
@@ -138,10 +140,11 @@
 
        A(:,:) = Uf(2:5,1:ic)
 
-!      write(*,*) "2: CGEEV"
+       !write(*,*) "2: CGEEV"
        call CGEEV('N', 'V', ic, A, ic, eval, evec, &
                   ic, evec, ic, work, lwork, rwork, info)
 
+       i=1
        err = eval(1)
        BC(1:ic) = evec(:,i)
        do i = 2, ic
@@ -150,12 +153,15 @@
            BC(1:ic) = evec(:,i)
          end if
        end do
-       write(*,*) "Solve deallocate"
-       !deallocate( A, work, rwork, eval, evec )
+       !write(*,*) "Solve deallocate"
+       deallocate( A, work, rwork, eval, evec )
 
        ievec = 1
+       !write(*,*) "ny-1=",ny-1," neq=",neq," ic=",ic," ymax=",ymax
        call conte( ny-1, tol, neq, ic, Ui, Uf, ymax, zero, ievec, &
                    parder, BC, efun)
+
+       !write(*,*) "Finished Conte"
 
 !.... make the phase reference consistent
 

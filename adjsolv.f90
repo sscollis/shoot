@@ -123,6 +123,7 @@
        call CGEEV('N', 'V', ic, A, ic, eval, evec, &
                   ic, evec, ic, work, lwork, rwork, info)
 
+       i=1
        err = eval(1)
        BC(1:ic) = evec(:,i)
        do i = 2, ic
@@ -131,7 +132,7 @@
            BC(1:ic) = evec(:,i)
          end if
        end do
-       write(*,*) "adjsolv deallocate"
+       !write(*,*) "adjsolv deallocate"
        deallocate( A, work, rwork, eval, evec )
 
        ievec = 1
