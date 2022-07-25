@@ -150,7 +150,8 @@
            BC(1:ic) = evec(:,i)
          end if
        end do
-       deallocate( A, work, rwork, eval, evec )
+       write(*,*) "Solve deallocate"
+       !deallocate( A, work, rwork, eval, evec )
 
        ievec = 1
        call conte( ny-1, tol, neq, ic, Ui, Uf, ymax, zero, ievec, &

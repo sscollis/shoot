@@ -60,6 +60,7 @@
 #if VERBOSE
       write(*,"('Completed initial')")
 #endif
+      write(*,*) "Deallocate initial"
       deallocate( work, rwork )
       return
       end

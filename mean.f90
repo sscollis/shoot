@@ -70,6 +70,7 @@
 !.... allocate room for the profile data
 
         if ( allocated(ym) ) then
+          write(*,*) "mean deallocate"
           deallocate( ym, vmt, vms, g2vmt, g2vms, g22vmt, g22vms )
         end if
         allocate( ym(nym), vmt(nym,ndofm), vms(nym,ndofm), &

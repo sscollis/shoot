@@ -131,6 +131,7 @@
            BC(1:ic) = evec(:,i)
          end if
        end do
+       write(*,*) "adjsolv deallocate"
        deallocate( A, work, rwork, eval, evec )
 
        ievec = 1

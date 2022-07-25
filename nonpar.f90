@@ -208,6 +208,7 @@ subroutine nonpar
             emax(idof,i) = cmplx(umaxr,umaxi)
           end do
         end do
+        write(*,*) "nonpar deallocate"
         deallocate( yknot, bs )
         deallocate( ty, tq )
 #endif
@@ -335,6 +336,7 @@ subroutine nonpar
 #endif
         end do                ! loop on i
 
+        write(*,*) "nonpar 2 deallocate"
         deallocate( x, y, alpha, beta, omega, dalphadx )
         deallocate( q, dqdy, dqdx, dqdxy, a, ke, ind )
         deallocate( c1, c2, c3, z1, z2, z3, emax, demax )
