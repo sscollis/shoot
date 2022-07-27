@@ -6,7 +6,11 @@
 #  Revised: 5/9/2022
 #
 #==============================================================================
-NAME     = shoot
+NAME   = shoot
+#
+# Turn on NR for now (needs license to use)
+#
+USE_NR = 1
 #
 # Turn on ODEINT if desired
 #
