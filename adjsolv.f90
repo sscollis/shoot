@@ -59,7 +59,7 @@
          A(1,:) = Uf(1,1:ic)
          A(2,:) = Uf(6,1:ic)
          A(3,:) = Uf(7,1:ic)
-         A(4,:) = Uf(8,1:ic)
+         !A(4,:) = Uf(8,1:ic)
 
 !.... compute the eigenvalues (only) of A and select the minimum eval
 
@@ -118,7 +118,7 @@
        A(1,:) = Uf(1,1:ic)
        A(2,:) = Uf(6,1:ic)
        A(3,:) = Uf(7,1:ic)
-       A(4,:) = Uf(8,1:ic)
+       !A(4,:) = Uf(8,1:ic)
 
        call CGEEV('N', 'V', ic, A, ic, eval, evec, &
                   ic, evec, ic, work, lwork, rwork, info)

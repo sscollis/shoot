@@ -49,6 +49,8 @@
        real    :: time, Ma, Re, Pr, gamma, cv
        integer :: i, j, k, idof
        real    :: tmp
+
+       logical :: useIJ=.true.
 !============================================================================!
 
 !.... read the grid file
@@ -70,15 +72,32 @@
             m11(nym,nxm), m12(nym,nxm), m22(nym,nxm),            &
             n11(nym,nxm), n12(nym,nxm), n22(nym,nxm) )
   open (imean,file='lstm.dat',form='unformatted', status='old',err=200)
-  read(imean) m1, m2, n1, n2, m11, m12, m22, n11, n12, n22
+  if (useIJ) then
+    read(imean) ((m1(j,i), i=1,nxm), j=1,nym), & 
+                ((m2(j,i), i=1,nxm), j=1,nym), &
+                ((n1(j,i), i=1,nxm), j=1,nym), &
+                ((n2(j,i), i=1,nxm), j=1,nym), &
+                ((m11(j,i), i=1,nxm), j=1,nym),&
+                ((m12(j,i), i=1,nxm), j=1,nym),&
+                ((m22(j,i), i=1,nxm), j=1,nym),&
+                ((n11(j,i), i=1,nxm), j=1,nym),&
+                ((n12(j,i), i=1,nxm), j=1,nym),&
+                ((n22(j,i), i=1,nxm), j=1,nym)
+  else
+    read(imean) m1, m2, n1, n2, m11, m12, m22, n11, n12, n22
+  endif
   close(imean)
 
 !.... read the datafile
 
   open(imean, file='lstq.dat', form='unformatted', status='old',err=300)
   read(imean) lstep, time, nxm, nym, nzm, ndofm, Re, Ma, Pr, gamma, cv
-  allocate( vm(nym,nxm,ndofm) )
-  read(imean) vm
+  allocate( vm(nym,nxm,ndofm))
+  if (useIJ) then 
+    read(imean) (((vm(j,i,k), k=1,ndofm), i=1,nxm), j=1,nym)
+  else
+    read(imean) vm
+  endif
   close(imean)
 
 !.... Compute first derivatives of field in the mapped space

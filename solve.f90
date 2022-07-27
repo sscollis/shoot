@@ -66,7 +66,13 @@
 
 !.... form the boundary condition matrix for an isothermal wall
 
+#if 1
          A(:,:) = Uf(2:5,1:ic)
+#else
+         A(:,:) = 0
+         write(*,*) "ic = ", ic
+         A(2:5,1:ic) = Uf(2:5,1:ic)
+#endif
 
 !.... compute the eigenvalues (only) of A and select the minimum eval
 
@@ -138,7 +144,12 @@
 !.... that satisfies the boundary conditions by solving an eigensystem
 !.... to determine the eigenvector cooresponding to the zero eigenvalue.
 
+#if 1
        A(:,:) = Uf(2:5,1:ic)
+#else
+       A(:,:) = 0
+       A(2:5,1:ic) = Uf(2:5,1:ic)
+#endif
 
        !write(*,*) "2: CGEEV"
        call CGEEV('N', 'V', ic, A, ic, eval, evec, &

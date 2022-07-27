@@ -45,17 +45,17 @@
 !.... solve the eigenproblem
       
       call CGEEV('N', 'V', neq, Fh, neq, eval, evec, &
-	         neq, evec, neq, work, lwork, rwork, info)
+                 neq, evec, neq, work, lwork, rwork, info)
       
 !.... use the solutions that are damped to infinity to form the initial
 
       Uic = zero
       ic = 0
       do ieq = 1, neq
-	if ( real(eval(ieq)) .lt. zero ) then
-	  ic = ic + 1
-	  Uic(:,ic) = evec(:,ieq) * exp( eval(ieq) * ymax )
-	end if
+        if ( real(eval(ieq)) .lt. zero ) then
+          ic = ic + 1
+          Uic(:,ic) = evec(:,ieq) * exp( eval(ieq) * ymax )
+        end if
       end do
 
       !write(*,*) "adjini deallocate"
