@@ -20,12 +20,13 @@ ifdef USE_ODEINT
 endif
 #
 DEBUG    = -g -fbounds-check
+TRAP     = -ffpe-trap=invalid
 #TRAP    = -ffpe-trap=invalid,zero,overflow 
-FFLAGS   = -O2 -fdefault-real-8 -fdefault-double-8 -ffixed-line-length-120 \
+FFLAGS   = -fdefault-real-8 -fdefault-double-8 -ffixed-line-length-120 \
            -cpp -std=legacy $(DEFINES) $(TRAP) $(DEBUG) -c
-F90FLAGS = -O2 -fdefault-real-8 -fdefault-double-8 -cpp $(DEFINES) \
+F90FLAGS = -fdefault-real-8 -fdefault-double-8 -cpp $(DEFINES) \
            $(TRAP) $(DEBUG) -c
-OFLAGS   = -O2 $(DEBUG) 
+OFLAGS   = $(DEBUG) 
 LIB      = -L/usr/local/opt/openblas/lib -lopenblas
 FC       = gfortran
 #

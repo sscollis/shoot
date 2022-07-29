@@ -97,7 +97,7 @@
         close(imean)
 
 #ifdef USE_BSLIB
-        if (allocated(knot) deallocate(knot)
+        if (allocated(knot)) deallocate(knot)
         allocate( knot(nym+kord) )
         call BSNAK( nym, ym, kord, knot)
         call BSINT( nym, ym, vmt(1,1), kord, knot, vms(1,1) )
