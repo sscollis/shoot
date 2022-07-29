@@ -52,7 +52,7 @@
       Uic = zero
       ic = 0
       do ieq = 1, neq
-        write(*,*) ieq, eval(ieq), real(eval(ieq))
+!        write(*,*) ieq, eval(ieq), real(eval(ieq))
         if ( real(eval(ieq)) .lt. zero ) then
           ic = ic + 1
           Uic(:,ic) = evec(:,ieq) * exp( eval(ieq) * ymax )

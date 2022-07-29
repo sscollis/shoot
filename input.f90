@@ -5,9 +5,9 @@ subroutine input
   use material
   implicit none
 
-  namelist /inputparam/ mattyp, Ma, Re, Pr, ny, ymax, ievec, &
-                        betar, betai, omegar, omegai, npcalc, &
-                        efun_out, maxIter, curve
+  namelist /shoot/ mattyp, Ma, Re, Pr, ny, ymax, ievec, &
+                   betar, betai, omegar, omegai, npcalc, &
+                   efun_out, maxIter, curve, useParallel
 !==============================================================================
 
   write (*,"('SHOOT Compressible Flow Linear Stability Solver')")
@@ -77,6 +77,9 @@ subroutine input
   
   write(*,"('Use curvative (0/1)  ==> ',$)")
   read(*,*) curve 
+  
+  write(*,"('Use parallel flow (T/F)  ==> ',$)")
+  read(*,*) useParallel 
 
 !.... npcalc = 0   -->  polish eigenvalues, solve adjoint, compute nonparallel
 !.... npcalc = 1   -->  compute nonparallel terms assuming output.dat is avail
@@ -93,7 +96,7 @@ subroutine input
 !.... echo input using Namelist format
 
   write(*,*)
-  write(*,NML=inputparam)
+  write(*,NML=shoot)
   write(*,*)
 
   return

@@ -4,9 +4,9 @@
 !=============================================================================!
   module meanflow
 !=============================================================================!
-          integer :: nym, ndofm=5, kord=3
-          real, allocatable :: ym(:), vmt(:,:), g2vmt(:,:), g22vmt(:,:)
-          real, allocatable :: vms(:,:), g2vms(:,:), g22vms(:,:), knot(:)
+    integer :: nym, ndofm=5, kord=3
+    real, allocatable :: ym(:), vmt(:,:), g2vmt(:,:), g22vmt(:,:)
+    real, allocatable :: vms(:,:), g2vms(:,:), g22vms(:,:), knot(:)
   end module meanflow
 
 !=============================================================================!
@@ -205,6 +205,7 @@
 subroutine getmean( i, y, v, g1v, g2v, g11v, g12v, g22v )
 !=============================================================================!
   use meanflow
+  use global
   implicit none
 
   integer :: i
@@ -216,17 +217,12 @@ subroutine getmean( i, y, v, g1v, g2v, g11v, g12v, g22v )
   logical, save :: first_time = .true.
 !=============================================================================!
 
-#if 1
-
-  if (first_time) then
+  if (first_time.and.(.not.useParallel)) then
     first_time = .false.
     write(*,*)
-    write(*,&
-"('WARNING:  getmean (general mean flow) is not supported for a 2d profile list.')")
-    write(*,&
-"('          Using parallel flow approximation, so that nonparallel terms should ')")
-    write(*,&
-"('          be identically zero.  Full nonparallel effect must use shoot-2d.   ')")
+    write(*,"('WARNING:  getmean (general mean flow) is not supported for a 2d profile list.')")
+    write(*,"(' Using parallel flow approximation, so some nonparallel terms should ')")
+    write(*,"(' be identically zero.  Full nonparallel effect must use shoot-2d.   ')")
   endif
 
   call getmeanp( i, y, v, g2v, g22v )
@@ -238,50 +234,6 @@ subroutine getmean( i, y, v, g1v, g2v, g11v, g12v, g22v )
   g12v    = 0.0
   g22v(3) = 0.0
 
-#else
-
-#ifdef USE_BSLIB
-  if ( y .gt. ym(nym) ) then
-    do idof = 1, ndofm
-      v(idof)    =    vm(nym,idof)
-      g1v(idof)  =  g1vm(nym,idof)
-      g2v(idof)  =  g2vm(nym,idof)
-      g11v(idof) = g11vm(nym,idof)
-      g12v(idof) = g12vm(nym,idof)
-      g22v(idof) = g22vm(nym,idof)
-    end do
-    return
-  end if
-  do idof = 1, ndofm
-    v(idof)    = BSVAL( y, kord, knot, nym, vms(1,idof) ) 
-    g1v(idof)  = BSVAL( y, kord, knot, nym, g1vms(1,idof) ) 
-    g2v(idof)  = BSVAL( y, kord, knot, nym, g2vms(1,idof) ) 
-    g11v(idof) = BSVAL( y, kord, knot, nym, g11vms(1,idof) ) 
-    g12v(idof) = BSVAL( y, kord, knot, nym, g12vms(1,idof) ) 
-    g22v(idof) = BSVAL( y, kord, knot, nym, g22vms(1,idof) ) 
-  enddo
-#else
-  if ( y .gt. ym(nym) ) then
-    do idof = 1, ndofm
-      v(idof)    =    vm(nym,idof)
-      g1v(idof)  =  g1vm(nym,idof)
-      g2v(idof)  =  g2vm(nym,idof)
-      g11v(idof) = g11vm(nym,idof)
-      g12v(idof) = g12vm(nym,idof)
-      g22v(idof) = g22vm(nym,idof)
-    end do
-    return
-  end if
-  do idof = 1, ndofm
-    call SPEVAL(nym, ym,    vm(1,idof),    vms(1,idof),  y,    v(idof))
-    call SPEVAL(nym, ym,  g1vm(1,idof),  g1vms(1,idof),  y,  g1v(idof))
-    call SPEVAL(nym, ym,  g2vm(1,idof),  g2vms(1,idof),  y,  g2v(idof))
-    call SPEVAL(nym, ym, g11vm(1,idof), g11vms(1,idof),  y, g11v(idof))
-    call SPEVAL(nym, ym, g12vm(1,idof), g12vms(1,idof),  y, g12v(idof))
-    call SPEVAL(nym, ym, g22vm(1,idof), g22vms(1,idof),  y, g22v(idof))
-  enddo
-#endif
-#endif
   return
 end subroutine getmean
 

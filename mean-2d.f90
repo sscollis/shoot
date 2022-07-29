@@ -199,6 +199,7 @@
   subroutine getmean( i, y, v, g1v, g2v, g11v, g12v, g22v )
 !=============================================================================!
   use meanflow
+  use global
   implicit none
 
   integer :: i
@@ -206,30 +207,40 @@
   real    :: g11v(ndofm), g12v(ndofm) , g22v(ndofm)
 
   integer :: idof
+  logical, save :: first_time = .true.
 !=============================================================================!
-  if ( y .gt. ym(nym,i) ) then
-    do idof = 1, ndofm
-      v(idof)    = vm(nym,i,idof)
-      g1v(idof)  = g1vm(nym,i,idof)
-      g2v(idof)  = g2vm(nym,i,idof)
-      g11v(idof) = g11vm(nym,i,idof)
-      g12v(idof) = g12vm(nym,i,idof)
-      g22v(idof) = g22vm(nym,i,idof)
-    end do
-    return
-  end if
-  call MSPEVAL(nym, ym(1,i), ndofm, vm(:,i,:),    &
-               vms(:,:), y, v(:))
-  call MSPEVAL(nym, ym(1,i), ndofm, g1vm(:,i,:),  &
-               g1vms(:,:), y, g1v(:))
-  call MSPEVAL(nym, ym(1,i), ndofm, g2vm(:,i,:),  &
-               g2vms(:,:), y, g2v(:))
-  call MSPEVAL(nym, ym(1,i), ndofm, g11vm(:,i,:), &
-               g11vms(:,:), y, g11v(:))
-  call MSPEVAL(nym, ym(1,i), ndofm, g12vm(:,i,:), &
-               g12vms(:,:), y, g12v(:))
-  call MSPEVAL(nym, ym(1,i), ndofm, g22vm(:,i,:), &
-               g22vms(:,:), y, g22v(:))
+  if (useParallel) then
+    if (first_time) then
+      first_time = .false.
+      write(*,"('WARNING:  using parallel flow approximation even through')")
+      write(*,"('          shoot-2d uses a full flow')")
+    endif
+    call getmeanp( i, y, v, g2v, g22v )
+    v(2)    = 0.0
+    g1v     = 0.0
+    g2v(3)  = 0.0
+    g11v    = 0.0
+    g12v    = 0.0
+    g22v(3) = 0.0
+  else
+    if ( y .gt. ym(nym,i) ) then
+      do idof = 1, ndofm
+        v(idof)    = vm(nym,i,idof)
+        g1v(idof)  = g1vm(nym,i,idof)
+        g2v(idof)  = g2vm(nym,i,idof)
+        g11v(idof) = g11vm(nym,i,idof)
+        g12v(idof) = g12vm(nym,i,idof)
+        g22v(idof) = g22vm(nym,i,idof)
+      end do
+      return
+    end if
+    call MSPEVAL(nym, ym(1,i), ndofm, vm(:,i,:), vms(:,:), y, v(:))
+    call MSPEVAL(nym, ym(1,i), ndofm, g1vm(:,i,:), g1vms(:,:), y, g1v(:))
+    call MSPEVAL(nym, ym(1,i), ndofm, g2vm(:,i,:), g2vms(:,:), y, g2v(:))
+    call MSPEVAL(nym, ym(1,i), ndofm, g11vm(:,i,:), g11vms(:,:), y, g11v(:))
+    call MSPEVAL(nym, ym(1,i), ndofm, g12vm(:,i,:), g12vms(:,:), y, g12v(:))
+    call MSPEVAL(nym, ym(1,i), ndofm, g22vm(:,i,:), g22vms(:,:), y, g22v(:))
+  endif
   return
   end
 
@@ -254,12 +265,9 @@
     end do
     return
   end if
-  call MSPEVAL(nym, ym(1,i), ndofm, vm(:,i,:),    &
-               vms(:,:), y, v(:))
-  call MSPEVAL(nym, ym(1,i), ndofm, g2vm(:,i,:),  &
-               g2vms(:,:), y, g2v(:))
-  call MSPEVAL(nym, ym(1,i), ndofm, g22vm(:,i,:), &
-               g22vms(:,:), y, g22v(:))
+  call MSPEVAL(nym, ym(1,i), ndofm, vm(:,i,:), vms(:,:), y, v(:))
+  call MSPEVAL(nym, ym(1,i), ndofm, g2vm(:,i,:), g2vms(:,:), y, g2v(:))
+  call MSPEVAL(nym, ym(1,i), ndofm, g22vm(:,i,:), g22vms(:,:), y, g22v(:))
   return
   end
 
