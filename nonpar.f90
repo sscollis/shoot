@@ -1,13 +1,13 @@
 !=============================================================================!
-module bspline
-  integer           :: nbs, kyord = 5
-  real, allocatable :: yknot(:)
-  real, allocatable :: bs(:)
-  real, external :: bsder
-end module bspline
+        module bspline
+          integer           :: nbs, kyord=5
+          real, allocatable :: yknot(:)
+          real, allocatable :: bs(:)
+          real, external    :: bsder
+        end module bspline
 
 !=============================================================================!
-subroutine nonpar
+        subroutine nonpar
 !
 ! Compute the nonparallel corrections to the LST growth-rate and
 ! wavenumber.  Updated to second-order boundary derivatives and
@@ -21,7 +21,7 @@ subroutine nonpar
         use bspline
         implicit none
 
-        integer, parameter :: ndof = 8
+        integer, parameter :: ndof=8
         real, parameter    :: zero=0.0, pt5=0.5, one=1.0, two=2.0
         complex, parameter :: im=(0.0,1.0)
 
@@ -53,22 +53,15 @@ subroutine nonpar
 
 !=============================================================================!
 
-        write(*,"(/,'Computing nonparallel correction...',/)")
-
-!.... open some output files
-
-        open(20,file='NPsigma.dat')
-        open(21,file='NPalpha.dat')
-        open(22,file='NPparm.new')
-
 !.... open the output.dat file and read the parameters
 
+        write(*,'(/,"Reading output.dat...",/)')
         open(iin,file='output.dat',form='unformatted',err=100)
         read(iin) nx, ny, ymax, Ma, Re, Pr
 
-        if (nx.le.1) then
-          write(*,*) 'Nx must be greater than 1'
-          call exit(0)
+        if (nx.lt.1) then
+          write(*,*) 'Nx must be greater than 0'
+          call exit(1)
         end if
 
         allocate( x(nx), y(ny), alpha(nx), beta(nx), omega(nx), dalphadx(nx) )
@@ -86,7 +79,6 @@ subroutine nonpar
           y(j) = ymax - dy * real(j-1)
         end do
 
-        write(22,*) nx
         do i = 1, nx
           read(iin) ind(i), x(i), alpha(i), beta(i), omega(i), &
                     q(:,:,i), dqdy(:,:,i), a(:,:,i), &
@@ -95,7 +87,23 @@ subroutine nonpar
         end do
         close(iin)
 
+!.... loop over the stations
+
+        write(*,'("Outputing polished eigenvalues and eigenfunctions",/)')
+
+        open(22,file='parm.new')
+        write(22,*) nx
+
         do i = 1, nx
+
+!.... parm.new (These are the polished parallel eigenvalues)
+!
+!     1.  profile index
+!     2.  station location (usually this is arc length)
+!     3.  alpha_r
+!     4.  alpha_i
+
+          write(22,20) ind(i), x(i), real(alpha(i)), aimag(alpha(i))
 
 !.... write-out the regular eigenfunctions
 
@@ -120,6 +128,16 @@ subroutine nonpar
           close(iout)
 
         end do
+        close(22)
+
+!============================================================================!
+
+        if (nx.le.1) then
+          write(*,*) 'Nx must be greater than 1 for nonparallel output'
+          call exit(1)
+        end if
+
+        write(*,"('Computing nonparallel correction...',/)")
 
 !.... form the streamwise derivatives of the eigenfunctions
 
@@ -146,6 +164,8 @@ subroutine nonpar
         call cg1( ndof*ny, q, dqdx, nx, dx, 0, .false. )
         call cg1( ndof*ny, dqdy, dqdxy, nx, dx, 0, .false. )
 
+        write(*,*) "1:  I am here"
+
 !.... form the derivative of quasi-parallel growth-rate, alpha
 
         if (.false.) then
@@ -162,6 +182,8 @@ subroutine nonpar
 
         call cg1( 1, alpha, dalphadx, nx, dx, 0, .false. )
 
+        write(*,*) "2:  I am here"
+
 !.... compute the disturbance kinetic energy integral (trapezoid)
 
         do i = 1, nx
@@ -176,6 +198,8 @@ subroutine nonpar
           ke(i) = ke(i) + pt5 * dy * ( abs(q(2,j,i))**2 + abs(q(3,j,i))**2 + &
                                        abs(q(4,j,i))**2 )
         end do
+
+        write(*,*) "3:  I am here"
 
 !.... find the maximum magnitude of the u-velocity eigenfunction
 
@@ -217,10 +241,11 @@ subroutine nonpar
             emax(idof,i) = cmplx(umaxr,umaxi)
           end do
         end do
-        !write(*,*) "nonpar deallocate"
         deallocate( yknot, bs )
         deallocate( ty, tq )
 #endif
+
+        write(*,*) "4:  I am here"
 
 !.... compute the streamwise derivative of the disturbance kinetic energy
 
@@ -237,6 +262,8 @@ subroutine nonpar
         end if
 
         call g1( 1, ke, dkedx, nx, dx, 0, .false. )
+
+        write(*,*) "5:  I am here"
 
 !.... compute the streamwise derivative of the maximum u velocity
 
@@ -258,35 +285,45 @@ subroutine nonpar
 
         call cg1( ndof, emax, demax, nx, dx, 0, .false. )
 
+        write(*,*) "6:  I am here"
+
+!.... open output files
+
+        open(20,file='NPsigma.dat')
+        open(21,file='NPalpha.dat')
+
 !.... form h1 and h2 using trapezoid integration at each station
 
-        do i = 1, nx
+        loop_h12:  do i = 1, nx
+
+          write(*,*) "i = ", i
+
           j = 1
-          h1 = pt5 * dy * ( c1(j,i) + inprod(ndof, z1(:,j,i), dqdx(:,j,i) ) )
-          h2 = pt5 * dy * ( dalphadx(i) * c2(j,i) + c3(j,i) + &
-                            inprod(ndof, z2(:,j,i), dqdx(:,j,i) ) + &
+          h1 = pt5 * dy * ( c1(j,i) + inprod(ndof, z1(:,j,i), dqdx(:,j,i)) )
+          h2 = pt5 * dy * ( dalphadx(i) * c2(j,i) + c3(j,i) +           &
+                            inprod(ndof, z2(:,j,i), dqdx(:,j,i) ) +     &
                             inprod(ndof, z3(:,j,i), dqdxy(:,j,i) ) )
           do j = 2, ny-1
-            h1 = h1 + dy * ( c1(j,i) + inprod(ndof, z1(:,j,i), dqdx(:,j,i) ) )
-            h2 = h2 + dy * ( dalphadx(i) * c2(j,i) + c3(j,i) + &
-                             inprod(ndof, z2(:,j,i), dqdx(:,j,i) ) + &
-                             inprod(ndof, z3(:,j,i), dqdxy(:,j,i) ) )
+            h1 = h1 + dy * ( c1(j,i) + inprod(ndof, z1(:,j,i), dqdx(:,j,i)) )
+            h2 = h2 + dy * ( dalphadx(i) * c2(j,i) + c3(j,i) +          &
+                             inprod(ndof, z2(:,j,i), dqdx(:,j,i)) +     &
+                             inprod(ndof, z3(:,j,i), dqdxy(:,j,i)) )
           end do
           j = ny
-          h1 = h1 + pt5 * dy * ( c1(j,i) + inprod(ndof, z1(:,j,i), &
-                                 dqdx(:,j,i) ) )
-          h2 = h2 + pt5 * dy * ( dalphadx(i) * c2(j,i) + c3(j,i) + &
-                                 inprod(ndof, z2(:,j,i), dqdx(:,j,i) ) + &
-                                 inprod(ndof, z3(:,j,i), dqdxy(:,j,i) ) )
+          h1 = h1 + pt5 * dy * ( c1(j,i) + inprod(ndof, z1(:,j,i),      &
+                                 dqdx(:,j,i)) )
+          h2 = h2 + pt5 * dy * ( dalphadx(i) * c2(j,i) + c3(j,i) +      &
+                                 inprod(ndof, z2(:,j,i), dqdx(:,j,i)) + &
+                                 inprod(ndof, z3(:,j,i), dqdxy(:,j,i)) )
 
 !.... compute the growth-rate and wavenumber with nonparallel corrections
 
           grdke = -aimag(alpha(i)) - real(h2/h1) + pt5 * dkedx(i) / ke(i)
 
           do idof = 2, 4
-            gr(idof) = -aimag(alpha(i)) -  real(h2/h1) + &
+            gr(idof) = -aimag(alpha(i)) -  real(h2/h1) +                &
                         real(demax(idof,i) / emax(idof,i))
-            wn(idof) =  real(alpha(i)) - aimag(h2/h1) + &
+            wn(idof) =  real(alpha(i)) - aimag(h2/h1) +                 &
                         aimag(demax(idof,i) / emax(idof,i))
           end do
 
@@ -303,9 +340,9 @@ subroutine nonpar
 !     10.  Complete nonparallel growth-rate
 
           write(20,10) x(i), -aimag(alpha(i)), -real(h2/h1), &
-                       real(demax(2,i) / emax(2,i)), gr(2), &
-                       real(demax(3,i) / emax(3,i)), gr(3), &
-                       real(demax(4,i) / emax(4,i)), gr(4), &
+                       real(demax(2,i) / emax(2,i)), gr(2),  &
+                       real(demax(3,i) / emax(3,i)), gr(3),  &
+                       real(demax(4,i) / emax(4,i)), gr(4),  &
                        pt5*dkedx(i)/ke(i), grdke
 
 !.... NPalpha.dat
@@ -315,69 +352,59 @@ subroutine nonpar
 !     3-8. component data (usually interested in the streamwise component
 
           write(21,10) x(i), real(alpha(i)), -aimag(h2/h1), &
-                       aimag(demax(2,i)/emax(2,i)), wn(2),    &
-                       aimag(demax(2,i)/emax(3,i)), wn(3),    &
+                       aimag(demax(2,i)/emax(2,i)), wn(2),  &
+                       aimag(demax(2,i)/emax(3,i)), wn(3),  &
                        aimag(demax(4,i)/emax(4,i)), wn(4)
-
-!.... NPparm.new (These are the polished parallel eigenvalues)
-!
-!     1.  profile index
-!     2.  station location (ussually this is arc length)
-!     3.  alpha_r
-!     4.  alpha_i
-
-          write(22,20) ind(i), x(i), real(alpha(i)), aimag(alpha(i))
 
 !.... some useful output statements when debugging
 
 !#ifdef DEBUG
-          write(23,10) x(i), real(h1), aimag(h1), abs(h1), &
+          write(23,10) x(i), real(h1), aimag(h1), abs(h1),  &
                              real(h2), aimag(h2), abs(h2)
           write(24,10) x(i), real(dalphadx(i)), aimag(dalphadx(i))
+
           j = ny-20
-          write(25,10) x(i), real(c1(j,i)), aimag(c1(j,i)), abs(c1(j,i)), &
+          write(25,10) x(i), real(c1(j,i)), aimag(c1(j,i)), abs(c1(j,i)),    &
                              real(c2(j,i)), aimag(c2(j,i)), abs(c2(j,i))
-          write(26,10) x(i), real(inprod(ndof, z1(:,j,i), dqdx(:,j,i) )), &
-                             aimag(inprod(ndof, z1(:,j,i), dqdx(:,j,i) )), &
+          write(26,10) x(i), real(inprod(ndof, z1(:,j,i), dqdx(:,j,i) )),    &
+                             aimag(inprod(ndof, z1(:,j,i), dqdx(:,j,i) )),   &
                              abs(inprod(ndof, z1(:,j,i), dqdx(:,j,i) ))
           write(27,10) x(i), real(q(2,j,i)), aimag(q(2,j,i)), abs(q(2,j,i)), &
                              real(a(2,j,i)), aimag(a(2,j,i)), abs(a(2,j,i))
 !#endif
-        end do                ! loop on i
+        end do loop_h12
 
-        !write(*,*) "nonpar 2 deallocate"
+        close(20)  ! NPsigma
+        close(21)  ! NPalpha
+        
         deallocate( x, y, alpha, beta, omega, dalphadx )
         deallocate( q, dqdy, dqdx, dqdxy, a, ke, ind )
         deallocate( c1, c2, c3, z1, z2, z3, emax, demax )
 
-        close(20)
-        close(21)
-        close(22)
+        return
+  10    format(20(1pe20.13,1x))
+  20    format(i4,1x,8(1pe20.13,1x))
 
-  return
-  10 format(20(1pe20.13,1x))
-  20 format(i4,1x,8(1pe20.13,1x))
+  100   write(*,"('ERROR opening output.dat')")
+        call exit(1)
 
-  100 write(*,"('ERROR opening output.dat')")
-  call exit(1)
-
-end subroutine nonpar
+        end subroutine nonpar
 
 !=============================================================================!
-subroutine fumax( x, g, d )
-!
+        subroutine fumax( x, g, d )
+
 !  Find the (local) maximum of a bsplined function
 !
 !=============================================================================!
-  use bspline
-  real :: x, f, g, d
+        use bspline
+        real :: x, f, g, d
 !=============================================================================!
 #ifdef IMSL
-  f = BSDER( 0, x, kyord, yknot, nbs, bs(:) )
-  g = BSDER( 1, x, kyord, yknot, nbs, bs(:) )
-  d = BSDER( 2, x, kyord, yknot, nbs, bs(:) )
+        f = BSDER( 0, x, kyord, yknot, nbs, bs(:) )
+        g = BSDER( 1, x, kyord, yknot, nbs, bs(:) )
+        d = BSDER( 2, x, kyord, yknot, nbs, bs(:) )
 #else
-  write(*,*) "ERROR:  IMSL BSDER is not available for fumax"
+        write(*,*) "ERROR:  IMSL BSDER is not available for fumax"
 #endif
-  return
-end subroutine fumax
+        return
+        end subroutine fumax

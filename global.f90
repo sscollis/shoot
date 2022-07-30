@@ -13,6 +13,7 @@
       real    :: ymax
       integer :: maxIter = 50
       logical :: useParallel = .true.
+      logical :: outputNonparallel = .true.
 
 !.... flags
 

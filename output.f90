@@ -32,7 +32,7 @@
 !.... loop over the normal index, go backwards in y since the eigenfunctions
 !.... are computed and stored in that manner.
 
-       do j = 1, ny
+       loop_j: do j = 1, ny
 
          y = ymax - dy * real(j-1)
 
@@ -54,7 +54,7 @@
 !.... now compute the inverse of Eh parallel and multiply through
 
          call inverse( neq, Ehp, Ehpinv)
-         Fhp = matmul( Ehpinv, Fh )
+         Fhp = matmul( Ehpinv, Fh )        !SSC: shouldn't this be Fhp?
 
 !.... use the parallel equations to compute the derivative of efun wrt y
 
@@ -64,6 +64,9 @@
 
          Z = matmul( adj(:,j), Ehpinv )
 
+!==============================================================================
+!                      C 1    C o m p u t a t i o n
+!==============================================================================
 !.... c1 is the part of h1 that doesn't require g1efun
 !.... note that the full matrices are used here
 #ifdef OLD_WAY
@@ -81,7 +84,9 @@
 !.... I think that Z1 should be zero [SSC 2-23-97]
          Z1(:,j) = zero
 #endif
-
+!==============================================================================
+!                      C 2    C o m p u t a t i o n
+!==============================================================================
 !.... c2 is the part of h2 that doesn't require g1efun or g12efun but
 !.... does require g1alpha
 
@@ -101,17 +106,16 @@
 !.... Ah maybe should be Ahp [SSC 2-23-97]
          Z2(:,j) = matmul( Z, Ahp )
 #endif
-
 !.... z3 is the part of h2 that must be dotted with g12efun
 
          Z3(:,j) = matmul( Z, Ch )
 
-  end do
+       end do loop_j
 
 !.... output the results to an unformatted file for processing later on
 
-  write(iout) iver, sl, alpha, beta, omega, efun, g2efun, adj, &
-              c1, c2, c3, Z1, Z2, Z3
+       write(iout) iver, sl, alpha, beta, omega, efun, g2efun, adj, &
+                   c1, c2, c3, Z1, Z2, Z3
 
-  return
-  end subroutine output
+       return
+     end subroutine output
