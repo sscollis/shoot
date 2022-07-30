@@ -196,18 +196,16 @@
 
         A(2,2) = A(2,2) - fact * ( -two * rmu * dhds * hinv3 )
         A(2,3) = A(2,3) - fact * ( g2mu * hinv + &
-                              rmu * 3.0 * dhdr * hinv2 )
+                                   rmu * 3.0 * dhdr * hinv2 )
 
         B(2,2) = B(2,2) - fact * ( g2mu + rmu * dhdr * hinv )
         B(2,5) = B(2,5) - fact * dmu * two * S12
 
         D(2,2) = D(2,2) - fact * ( g2mu * hinv * (-dhdr) - &
-                              rmu * ( dhdr**2 + dhdrr * h ) * hinv2 )
+                          rmu * ( dhdr**2 + dhdrr * h ) * hinv2 )
         D(2,3) = D(2,3) - fact * ( &
-                              two * rmu * ( dhdsr * h - dhds * dhdr ) * hinv3 )
-        D(2,5) = D(2,5) - fact * two * ( &
-                              g2dmu * S12 + &
-                              dmu * S1jj )
+                          two * rmu * ( dhdsr * h - dhds * dhdr ) * hinv3 )
+        D(2,5) = D(2,5) - fact * two * ( g2dmu * S12 + dmu * S1jj )
 
         Vxx(2,2) = Vxx(2,2) + fact * two * rmu * hinv2
         Vxy(2,3) = Vxy(2,3) + fact * rmu * hinv
@@ -243,8 +241,8 @@
         C(3,4) = C(3,4) - fact * ( g2lm )
 
         D(3,3) = D(3,3) - fact * ( g2lm * hinv * dhdr - &
-                              rlm * dhdr * hinv2 * dhdr + &
-                              rlm * hinv * dhdrr )
+                                   rlm * dhdr * hinv2 * dhdr + &
+                                   rlm * hinv * dhdrr )
 
         Vxy(3,2) = fact * rlm * hinv
 
@@ -266,7 +264,7 @@
         C(3,5) = C(3,5) - fact * dmu * two * S23
 
         D(3,2) = D(3,2) - fact * ( &
-                              rmu * (dhds * dhdr - h * dhdsr) * hinv3 )
+                          rmu * (dhds * dhdr - h * dhdsr) * hinv3 )
         D(3,3) = D(3,3) + fact * two * rmu * dhdr**2 * hinv2
         D(3,5) = D(3,5) - fact * two * ( g2dmu * S22 + dmu * S2jj )
 
@@ -392,9 +390,9 @@
 
         D(5,2) = D(5,2) + fact * four * rmu * S12 * dhdr * hinv
         D(5,5) = D(5,5) - fact * two * dmu * ( &
-                       S12**2 + S12**2 + &
-                       S22**2 + S23**2 + &
-                       S23**2 )
+                          S12**2 + S12**2 + &
+                          S22**2 + S23**2 + &
+                          S23**2 )
 
 !==============================================================================
 !.... form the extended matrices
@@ -409,6 +407,8 @@
         Eh(6,2)     = one
         Eh(7,4)     = one
         Eh(8,5)     = one
+
+        !write(*,*) "Eh(8,5) = ", Eh(8,5)
 
         Fh(1:5,1:5) = D + im * alpha * A + im * beta * C + &
                       alpha**2 * Vxx + alpha * beta * Vxz + &

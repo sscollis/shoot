@@ -11,7 +11,8 @@
       integer :: ny
       integer :: ndof = 5, neq = 8, nsd = 3
       real    :: ymax
-      integer :: maxIter = 20
+      integer :: maxIter = 50
+      logical :: useParallel = .true.
 
 !.... flags
 

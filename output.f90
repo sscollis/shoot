@@ -24,6 +24,9 @@
        real    :: y, dy
        integer :: j
 !=============================================================================!
+
+!#define OLD_WAY
+
        dy = ymax / real(ny-1)
 
 !.... loop over the normal index, go backwards in y since the eigenfunctions
@@ -63,22 +66,21 @@
 
 !.... c1 is the part of h1 that doesn't require g1efun
 !.... note that the full matrices are used here
-!
-!         vec   = matmul( Ah, efun(:,j) ) + matmul( Ch, g2efun(:,j) )
-
+#ifdef OLD_WAY
+         vec   = matmul( Ah, efun(:,j) ) + matmul( Ch, g2efun(:,j) )
+#else
 !.... Ah maybe should be Ahp [SSC 2-23-97]
-
          vec   = matmul( Ahp, efun(:,j) ) + matmul( Ch, g2efun(:,j) )
-
+#endif
          c1(j) = inprod( neq, Z, vec )
 
 !.... Z1 is the part of h1 that must be dotted with g1efun
-!
-!         Z1(:,j) = two * matmul( Z, Bh )
-
+#ifdef OLD_WAY
+         Z1(:,j) = two * matmul( Z, Bh )
+#else
 !.... I think that Z1 should be zero [SSC 2-23-97]
-
          Z1(:,j) = zero
+#endif
 
 !.... c2 is the part of h2 that doesn't require g1efun or g12efun but
 !.... does require g1alpha
@@ -93,12 +95,12 @@
          c3(j) = inprod( neq, Z, vec )
 
 !.... Z2 is the part of h2 that must be dotted with g1efun
-!
-!         Z2(:,j) = matmul( Z, Ah )
-
+#ifdef OLD_WAY
+         Z2(:,j) = matmul( Z, Ah )
+#else
 !.... Ah maybe should be Ahp [SSC 2-23-97]
-
          Z2(:,j) = matmul( Z, Ahp )
+#endif
 
 !.... z3 is the part of h2 that must be dotted with g12efun
 
