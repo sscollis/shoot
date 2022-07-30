@@ -66,6 +66,11 @@
 
 !.... form the boundary condition matrix for an isothermal wall
 
+         if (ic.ne.4) then
+           write(*,*) "solve:  dimensions of A don't match Uf range"
+           write(*,*) "ic = ",ic," which is not 4"
+           call exit(1)
+         endif
 #if 1
          A(:,:) = Uf(2:5,1:ic)
 #else
