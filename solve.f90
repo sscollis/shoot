@@ -66,6 +66,11 @@
 
 !.... form the boundary condition matrix for an isothermal wall
 
+         if (ic.ne.4) then
+           write(*,*) "solve:  dimensions of A don't match Uf range"
+           write(*,*) "ic = ",ic," which is not 4"
+           call exit(1)
+         endif
          A(:,:) = Uf(2:5,1:ic)
 
 !.... compute the eigenvalues (only) of A and select the minimum eval

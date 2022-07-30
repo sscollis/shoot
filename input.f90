@@ -5,7 +5,7 @@ subroutine input
   use material
   implicit none
 
-  namelist /inputparam/ mattyp, Ma, Re, Pr, ny, ymax, ievec, &
+  namelist /inputparam/ mattyp, Ma, Re, Pr, T0, ny, ymax, ievec, &
                         betar, betai, omegar, omegai, npcalc, &
                         efun_out, maxIter, curve
 !==============================================================================

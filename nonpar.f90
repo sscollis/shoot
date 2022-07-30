@@ -322,7 +322,7 @@ subroutine nonpar
 !.... NPparm.new (These are the polished parallel eigenvalues)
 !
 !     1.  profile index
-!     2.  station location (ussually this is arc length)
+!     2.  station location (usually this is arc length)
 !     3.  alpha_r
 !     4.  alpha_i
 
