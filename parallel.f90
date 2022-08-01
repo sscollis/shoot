@@ -103,7 +103,7 @@
 
 !.... compute mean material properties
 
-        call getmat(tm*te, rmu, rlm, con, dmu, d2mu, dlm, d2lm, dcon, d2con)
+        call sgetmat(tm*te, rmu, rlm, con, dmu, d2mu, dlm, d2lm, dcon, d2con)
 
 !.... nondimensionalize
 
@@ -407,8 +407,6 @@
         Eh(6,2)     = one
         Eh(7,4)     = one
         Eh(8,5)     = one
-
-        !write(*,*) "Eh(8,5) = ", Eh(8,5)
 
         Fh(1:5,1:5) = D + im * alpha * A + im * beta * C + &
                       alpha**2 * Vxx + alpha * beta * Vxz + &

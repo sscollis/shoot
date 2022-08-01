@@ -13,7 +13,7 @@
 
         real :: y
         complex :: Ah(neq,neq), Bh(neq,neq), Ch(neq,neq), &
-             Eh(neq,neq), Fh(neq,neq)
+                   Eh(neq,neq), Fh(neq,neq)
 
         real :: vm(ndof)
         real :: A(ndof,ndof), C(ndof,ndof)
@@ -70,11 +70,11 @@
 
 !.... compute the curvature metrics
 
-       if (curve.eq.0) then
-         lsl = -one
-       else
-         lsl = sl
-       endif
+        if (curve.eq.0) then
+          lsl = -one
+        else
+          lsl = sl
+        endif
 
         call calch( lsl, 1, y, h, dhds, dhdr, dhdsr, dhdrr )
 
@@ -176,9 +176,9 @@
 
 !.... compute mean material properties
 
-        call getmat(tm*te, rmu, rlm, con, dmu, d2mu, dlm, d2lm, dcon, d2con)
+        call sgetmat(tm*te, rmu, rlm, con, dmu, d2mu, dlm, d2lm, dcon, d2con)
 
- !.... nondimensionalize
+!.... nondimensionalize
 
         rmu   = rmu / rmue
         dmu   = dmu * Te / rmue
@@ -526,9 +526,10 @@
         B(5,5) = B(5,5) - fact * (g2con + dcon * gtm(2) + &
                               con * dhdr * hinv )
         C(5,5) = C(5,5) - fact * (g3con + dcon * gtm(3))
-        D(5,5) = D(5,5) - fact * (g1dcon * gtm(1) * hinv2 + &
-                              g2dcon * gtm(2) + g3dcon * gtm(3) + &
-                              dcon * Lapt )
+        D(5,5) = D(5,5) - fact * ( g1dcon * gtm(1) * hinv2 + &
+                                   g2dcon * gtm(2) + &
+                                   g3dcon * gtm(3) + &
+                                   dcon * Lapt )
 
         Vxx(5,5) = fact * con * hinv2
         Vyy(5,5) = fact * con

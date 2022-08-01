@@ -5,7 +5,6 @@
           real, allocatable :: bs(:)
           real, external    :: bsder
         end module bspline
-
 !=============================================================================!
         subroutine nonpar
 !
@@ -55,7 +54,7 @@
 
 !.... open the output.dat file and read the parameters
 
-        write(*,'(/,"Reading output.dat...",/)')
+        write(*,'(/,"Shoot::Nonpar:  Reading output.dat...",/)')
         open(iin,file='output.dat',form='unformatted',err=100)
         read(iin) nx, ny, ymax, Ma, Re, Pr
 
@@ -78,7 +77,6 @@
         do j = 1, ny
           y(j) = ymax - dy * real(j-1)
         end do
-
         do i = 1, nx
           read(iin) ind(i), x(i), alpha(i), beta(i), omega(i), &
                     q(:,:,i), dqdy(:,:,i), a(:,:,i), &
@@ -94,12 +92,13 @@
         open(22,file='parm.new')
         write(22,*) nx
 
-        do i = 1, nx
+        parm_new:  do i = 1, nx
 
-!.... parm.new (These are the polished parallel eigenvalues)
-!
+!==============================================================================
+!.... parm.new (These are the polished parallel eigensolutions on unit=22)
+!==============================================================================
 !     1.  profile index
-!     2.  station location (usually this is arc length)
+!     2.  station location [usually this is arc length, s(i)]
 !     3.  alpha_r
 !     4.  alpha_i
 
@@ -114,7 +113,7 @@
             write(iout,"(17(1pe13.6,1x))") y(j), &
               (real(q(idof,j,i)), aimag(q(idof,j,i)), idof=1,ndof)
           end do
-          close(iout)
+          close(iout)  ! efun
 
 !.... write-out the adjoint eigenfunctions
 
@@ -127,13 +126,15 @@
           end do
           close(iout)
 
-        end do
-        close(22)
+        end do parm_new  ! adj
+
+        close(22)  ! parm.new
 
 !============================================================================!
 
         if (nx.le.1) then
           write(*,*) 'Nx must be greater than 1 for nonparallel output'
+          write(*,*) '  since streamwise derivatives are needed'
           call exit(1)
         end if
 
@@ -287,10 +288,12 @@
 
         write(*,*) "6:  I am here"
 
-!.... open output files
+!.... open output files for nonparallel corrections
 
         open(20,file='NPsigma.dat')
         open(21,file='NPalpha.dat')
+
+!.... \TODO this would be better to use consistent RK4 integration
 
 !.... form h1 and h2 using trapezoid integration at each station
 
@@ -327,29 +330,30 @@
                         aimag(demax(idof,i) / emax(idof,i))
           end do
 
-!=============================================================================
-!.... output the results
-!=============================================================================
-
+!==============================================================================
+!....               O u t p u t   t h e   r e s u l t s
+!==============================================================================
 !.... NPsigma.dat
-!
-!     1.   parallel growth-rate
-!     2.   nonparallel correction
-!     3-8. component data
-!     9.   eigenfunction growth term
-!     10.  Complete nonparallel growth-rate
+!==============================================================================
+!     1.   x(i) [s(i) for body fitted mesh]
+!     2.   parallel growth-rate
+!     3.   nonparallel correction
+!     4-9. component data
+!     10.  eigenfunction growth term
+!     11.  Complete nonparallel growth-rate
 
           write(20,10) x(i), -aimag(alpha(i)), -real(h2/h1), &
                        real(demax(2,i) / emax(2,i)), gr(2),  &
                        real(demax(3,i) / emax(3,i)), gr(3),  &
                        real(demax(4,i) / emax(4,i)), gr(4),  &
                        pt5*dkedx(i)/ke(i), grdke
-
+!==============================================================================
 !.... NPalpha.dat
-!
-!     1.   parallel wavenumber
-!     2.   nonparallel correction
-!     3-8. component data (usually interested in the streamwise component
+!==============================================================================
+!     1.   x(i) [s(i) for body fitted mesh]
+!     2.   parallel wavenumber
+!     3.   nonparallel correction
+!     4-9. component data (usually interested in the streamwise component
 
           write(21,10) x(i), real(alpha(i)), -aimag(h2/h1), &
                        aimag(demax(2,i)/emax(2,i)), wn(2),  &
@@ -358,7 +362,8 @@
 
 !.... some useful output statements when debugging
 
-!#ifdef DEBUG
+#define DEBUG
+#ifdef DEBUG
           write(23,10) x(i), real(h1), aimag(h1), abs(h1),  &
                              real(h2), aimag(h2), abs(h2)
           write(24,10) x(i), real(dalphadx(i)), aimag(dalphadx(i))
@@ -371,7 +376,8 @@
                              abs(inprod(ndof, z1(:,j,i), dqdx(:,j,i) ))
           write(27,10) x(i), real(q(2,j,i)), aimag(q(2,j,i)), abs(q(2,j,i)), &
                              real(a(2,j,i)), aimag(a(2,j,i)), abs(a(2,j,i))
-!#endif
+#endif
+#undef DEBUG
         end do loop_h12
 
         close(20)  ! NPsigma
@@ -392,9 +398,8 @@
 
 !=============================================================================!
         subroutine fumax( x, g, d )
-
-!  Find the (local) maximum of a bsplined function
-!
+!=============================================================================!
+!       Find the (local) maximum of a bsplined function
 !=============================================================================!
         use bspline
         real :: x, f, g, d

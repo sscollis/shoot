@@ -20,6 +20,8 @@
        complex :: At, Bt, Ct, qt, fd
        real    :: fdxr, fdxi, fdyr, fdyi
 
+       complex :: dp=0
+       complex, external :: inprod
        external adjder
 
 !.... For Lapack eigensolver
@@ -59,7 +61,7 @@
          A(1,:) = Uf(1,1:ic)
          A(2,:) = Uf(6,1:ic)
          A(3,:) = Uf(7,1:ic)
-         !A(4,:) = Uf(8,1:ic)
+         A(4,:) = Uf(8,1:ic)
 
 !.... compute the eigenvalues (only) of A and select the minimum eval
 
@@ -118,7 +120,7 @@
        A(1,:) = Uf(1,1:ic)
        A(2,:) = Uf(6,1:ic)
        A(3,:) = Uf(7,1:ic)
-       !A(4,:) = Uf(8,1:ic)
+       A(4,:) = Uf(8,1:ic)
 
        call CGEEV('N', 'V', ic, A, ic, eval, evec, &
                   ic, evec, ic, work, lwork, rwork, info)
@@ -171,6 +173,18 @@
          close(15)
 
        end if
+
+!... Test orthogonality
+
+       dp = zero
+       j = 1
+       dp = dp + pt5 * dy * inprod(ndof,adj(:,j),efun(:,j))
+       do j = 2, ny-1
+         dp = dp + dy * inprod(ndof,adj(:,j),efun(:,j))
+       enddo
+       j = ny
+       dp = dp + pt5 * dy * inprod(ndof,adj(:,j),efun(:,j))
+       write(*,'(/,"inprod(adj,efun) = ",2(1e13.6,1x))') dp
 
        return
        end subroutine adjsolv

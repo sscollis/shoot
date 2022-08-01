@@ -19,8 +19,8 @@ ifdef USE_ODEINT
   DEFINES += -DUSE_ODEINT
 endif
 #
-DEBUG    = -g -fbounds-check
-#TRAP     = -ffpe-trap=invalid
+DEBUG    = -g -O2 -fbounds-check
+TRAP     = -ffpe-trap=invalid
 #TRAP    = -ffpe-trap=invalid,zero,overflow 
 FFLAGS   = -fdefault-real-8 -fdefault-double-8 -ffixed-line-length-120 \
            -cpp -std=legacy $(DEFINES) $(TRAP) $(DEBUG) -c
