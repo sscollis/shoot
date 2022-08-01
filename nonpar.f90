@@ -165,8 +165,6 @@
         call cg1( ndof*ny, q, dqdx, nx, dx, 0, .false. )
         call cg1( ndof*ny, dqdy, dqdxy, nx, dx, 0, .false. )
 
-        write(*,*) "1:  I am here"
-
 !.... form the derivative of quasi-parallel growth-rate, alpha
 
         if (.false.) then
@@ -183,8 +181,6 @@
 
         call cg1( 1, alpha, dalphadx, nx, dx, 0, .false. )
 
-        write(*,*) "2:  I am here"
-
 !.... compute the disturbance kinetic energy integral (trapezoid)
 
         do i = 1, nx
@@ -199,8 +195,6 @@
           ke(i) = ke(i) + pt5 * dy * ( abs(q(2,j,i))**2 + abs(q(3,j,i))**2 + &
                                        abs(q(4,j,i))**2 )
         end do
-
-        write(*,*) "3:  I am here"
 
 !.... find the maximum magnitude of the u-velocity eigenfunction
 
@@ -246,8 +240,6 @@
         deallocate( ty, tq )
 #endif
 
-        write(*,*) "4:  I am here"
-
 !.... compute the streamwise derivative of the disturbance kinetic energy
 
         if (.false.) then
@@ -263,8 +255,6 @@
         end if
 
         call g1( 1, ke, dkedx, nx, dx, 0, .false. )
-
-        write(*,*) "5:  I am here"
 
 !.... compute the streamwise derivative of the maximum u velocity
 
@@ -285,8 +275,6 @@
         end if
 
         call cg1( ndof, emax, demax, nx, dx, 0, .false. )
-
-        write(*,*) "6:  I am here"
 
 !.... open output files for nonparallel corrections
 
