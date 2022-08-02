@@ -37,7 +37,7 @@
 
        call initial( Ui, ic )
 
-#if VERBOSE >=3
+#if VERBOSE>=3
        write(*,*) "Ui = ", Ui(:,:)
 #endif
 
@@ -55,12 +55,12 @@
          icount = icount + 1
 
 !.... integrate the equations using orthonomalization
-#if VERBOSE >=3
+#if VERBOSE>=3
          write(*,*) "Starting Conte integration"
 #endif
          call conte( ny-1, tol, neq, ic, Ui, Uf, ymax, zero, ievec, &
                      parder, BC, efun )
-#if VERBOSE >=3
+#if VERBOSE>=3
          write(*,*) "Uf = ", Uf(:,:)
 #endif
 
@@ -81,14 +81,14 @@
 
 !.... compute the eigenvalues (only) of A and select the minimum eval
 
-#if VERBOSE >=3
+#if VERBOSE>=3
          write(*,*) "Calling [CZ]EEV: ic = ",ic
          write(*,*) "A = ", A(:,:)
          write(*,*) "CGEEV"
 #endif
          call CGEEV('N', 'N', ic, A, ic, eval, evec, &
                     ic, evec, ic, work, lwork, rwork, info)
-#if VERBOSE >=3
+#if VERBOSE>=3
          write(*,*) "Finished [CZ]EEV..."
 #endif
          err = eval(1)

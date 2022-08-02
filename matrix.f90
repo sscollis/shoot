@@ -57,14 +57,17 @@
 
 !.... hack-in parallel flow temporarily
 
-!       call getmeanp( iver, y, vm, g2vm, g22vm )
-
-!       vm(2)    = zero
-!       g1vm     = zero
-!       g2vm(3)  = zero
-!       g11vm    = zero
-!       g12vm    = zero
-!       g22vm(3) = zero
+#ifdef HACK_PARALLEL_FLOW
+        write(*,'("WARNING: forcing parallel flow in computing&
+                  &full matrices")')
+        call getmeanp( iver, y, vm, g2vm, g22vm )
+        vm(2)    = zero
+        g1vm     = zero
+        g2vm(3)  = zero
+        g11vm    = zero
+        g12vm    = zero
+        g22vm(3) = zero
+#endif 
 
 !=============================================================================
 

@@ -89,8 +89,9 @@
 
         write(*,'("Outputing polished eigenvalues and eigenfunctions",/)')
 
-        open(22,file='parm.new')
-        write(22,*) nx
+        open(22,file='NPparm.dat')
+        write(22,'("# ",i5)') nx
+        write(22,'("# ind(i), s(i), real(alpha(i)), aimag(alpha(i))")') 
 
         parm_new:  do i = 1, nx
 
@@ -279,7 +280,16 @@
 !.... open output files for nonparallel corrections
 
         open(20,file='NPsigma.dat')
+        write(20,'("# s(i), -aimag(alpha(i)), -real(h2/h1),  &
+                  &real(demax(2,i) / emax(2,i)), gr(2),  &
+                  &real(demax(3,i) / emax(3,i)), gr(3),  &
+                  &real(demax(4,i) / emax(4,i)), gr(4),  &
+                  &pt5*dkedx(i)/ke(i), grdke")')
         open(21,file='NPalpha.dat')
+        write(21,'("# s(i), real(alpha(i)), -aimag(h2/h1),  &
+                   &aimag(demax(2,i)/emax(2,i)), wn(2),  &
+                   &aimag(demax(2,i)/emax(3,i)), wn(3),  &
+                   &aimag(demax(4,i)/emax(4,i)), wn(4)")')
 
 !.... \TODO this would be better to use consistent RK4 integration
 
@@ -287,8 +297,9 @@
 
         loop_h12:  do i = 1, nx
 
+#ifdef VERBOSE
           write(*,*) "i = ", i
-
+#endif
           j = 1
           h1 = pt5 * dy * ( c1(j,i) + inprod(ndof, z1(:,j,i), dqdx(:,j,i)) )
           h2 = pt5 * dy * ( dalphadx(i) * c2(j,i) + c3(j,i) +           &

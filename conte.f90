@@ -110,7 +110,7 @@
       !write(*,*) "3: I am here..."
 
       do k = 1, nstep
-#if VERBOSE >= 2
+#if VERBOSE>=2
         write(*,*) "Conte: k = ",k," with nstep = ",nstep
 #endif
         t = to + h*k
@@ -130,11 +130,11 @@
             U(i,m,k) = Utemp(i)
           end do
 #else
-#if VERBOSE >=2
+#if VERBOSE>=2
           write(*,*) "Starting RK4 with k = ",k," m = ",m
 #endif
           call RK4(n, U(1,m,k-1), U(1,m,k), t-h, h, FHOMO)
-#if VERBOSE >=2
+#if VERBOSE>=2
           write(*,*) "Finished RK4 with k = ",k," m = ",m
 #endif
 #endif
@@ -239,7 +239,7 @@
 
 !.... return the solutions at the last node
 
-#if VERBOSE >=3
+#if VERBOSE>=3
       do k = 0, nstep
         write(*,*) "k = ",k," U(:,:,k) = ", U(:,:,k)
       enddo

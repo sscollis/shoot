@@ -19,6 +19,7 @@ ifdef USE_ODEINT
   DEFINES += -DUSE_ODEINT
 endif
 #
+DEFINES  += $(ADDONS)
 DEBUG    = -g -O2 -fbounds-check
 TRAP     = -ffpe-trap=invalid
 #TRAP    = -ffpe-trap=invalid,zero,overflow 

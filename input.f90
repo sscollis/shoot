@@ -96,7 +96,6 @@ subroutine input
 
   write(*,*)
   write(*,NML=shoot)
-  write(*,*)
 
   return
   end subroutine input

@@ -6,9 +6,10 @@
         integer :: i, nx
         integer :: imean=10, iparm=11, iout=12
 
+        logical :: echoParm=.true.
         character(80) :: pname, tmp
         integer :: is=0, ie=huge(0)
-        namelist /parm/ pname, nx, is, ie
+        namelist /parm/ pname, nx, is, ie, echoParm
         logical :: isParm=.false., isPnml=.false.
 !=============================================================================!
 
@@ -19,8 +20,9 @@
 !.... initialize the mean flow
 
         call initmean(imean)
-
+#ifdef VERBOSE
         write(*,'("Completed initmean...")')
+#endif
 
 !.... allocate space for the eigenfunction and adjoint solutions
 
@@ -32,10 +34,9 @@
         if (ispnml) then
           open(iparm,file='parm.nml',status='old',err=1000)
           read(iparm,nml=parm)
-          write(*,nml=parm)
           close(iparm)
           open(iparm,file=pname,status='old',err=1000)
-          write(*,'("Reading station information from ",a,$)') pname
+          write(*,'("Reading station information from ",a,$)') trim(pname)
           nx = 0
   40      continue
           read(iparm,'(a)',end=48) tmp
@@ -47,14 +48,15 @@
           else
             goto 40
           endif
-  48      write(*,'("  with Nx = ",i4," stations")') nx
+  48      write(*,'(" with Nx = ",i4," stations")') nx
           rewind(iparm)
+          if (echoParm) write(*,nml=parm)
         else
           pname = 'parm.dat'
           inquire(file=pname,exist=isparm)
           if (isparm) then
             nx = 0
-            write(*,'("Reading station information from parm.dat",$)')
+            write(*,'("Reading station information from",a,$)') pname
             open(iparm,file=pname,status='old',err=1000)
             !read(iparm,*,err=1000) nx
   20        continue

@@ -220,9 +220,12 @@ subroutine getmean( i, y, v, g1v, g2v, g11v, g12v, g22v )
   if (first_time.and.(.not.useParallel)) then
     first_time = .false.
     write(*,*)
-    write(*,"('WARNING:  getmean (general mean flow) is not supported for a 2d profile list.')")
-    write(*,"(' Using parallel flow approximation, so some nonparallel terms should ')")
-    write(*,"(' be identically zero.  Full nonparallel effect must use shoot-2d.   ')")
+    write(*,"('WARNING:  getmean (general mean flow) is not supported for &
+              &a 2d profile list.')")
+    write(*,"(' Using parallel flow approximation, so some nonparallel terms &
+              &should ')")
+    write(*,"(' be identically zero.  Full nonparallel effect must use &
+              &shoot-2d.   ')")
   endif
 
   call getmeanp( i, y, v, g2v, g22v )

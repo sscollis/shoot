@@ -14,6 +14,7 @@
       integer :: maxIter = 50
       logical :: useParallel = .true.
       logical :: outputNonparallel = .true.
+      logical :: forceParallel = .false.
 
 !.... flags
 

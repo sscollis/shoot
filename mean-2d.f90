@@ -209,6 +209,7 @@
   integer :: idof
   logical, save :: first_time = .true.
 !=============================================================================!
+
   if (useParallel) then
     if (first_time) then
       first_time = .false.
