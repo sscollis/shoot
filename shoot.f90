@@ -9,7 +9,7 @@
         logical :: echoParm=.true.
         character(80) :: pname, tmp
         integer :: is=0, ie=huge(0)
-        namelist /parm/ pname, nx, is, ie, echoParm
+        namelist /parm/ pname, nx, is, ie, echoParm, norm_efun
         logical :: isParm=.false., isPnml=.false.
 !=============================================================================!
 

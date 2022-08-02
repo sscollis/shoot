@@ -323,9 +323,9 @@
           grdke = -aimag(alpha(i)) - real(h2/h1) + pt5 * dkedx(i) / ke(i)
 
           do idof = 2, 4
-            gr(idof) = -aimag(alpha(i)) -  real(h2/h1) +                &
+            gr(idof) = -aimag(alpha(i)) - real(h2/h1) +                &
                         real(demax(idof,i) / emax(idof,i))
-            wn(idof) =  real(alpha(i)) - aimag(h2/h1) +                 &
+            wn(idof) =  real(alpha(i))  - aimag(h2/h1) +               &
                         aimag(demax(idof,i) / emax(idof,i))
           end do
 
@@ -370,9 +370,9 @@
           j = ny-20
           write(25,10) x(i), real(c1(j,i)), aimag(c1(j,i)), abs(c1(j,i)),    &
                              real(c2(j,i)), aimag(c2(j,i)), abs(c2(j,i))
-          write(26,10) x(i), real(inprod(ndof, z1(:,j,i), dqdx(:,j,i) )),    &
-                             aimag(inprod(ndof, z1(:,j,i), dqdx(:,j,i) )),   &
-                             abs(inprod(ndof, z1(:,j,i), dqdx(:,j,i) ))
+          write(26,10) x(i), real(inprod(ndof, z2(:,j,i), dqdx(:,j,i) )),    &
+                             aimag(inprod(ndof, z2(:,j,i), dqdx(:,j,i) )),   &
+                             abs(inprod(ndof, z2(:,j,i), dqdx(:,j,i) ))
           write(27,10) x(i), real(q(2,j,i)), aimag(q(2,j,i)), abs(q(2,j,i)), &
                              real(a(2,j,i)), aimag(a(2,j,i)), abs(a(2,j,i))
 #endif

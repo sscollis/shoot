@@ -15,6 +15,7 @@
       logical :: useParallel = .true.
       logical :: outputNonparallel = .true.
       logical :: forceParallel = .false.
+      logical :: norm_efun = .false.
 
 !.... flags
 

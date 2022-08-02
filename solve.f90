@@ -71,13 +71,13 @@
            write(*,*) "ic = ",ic," which is not 4"
            call exit(1)
          endif
-#if 1
-         A(:,:) = Uf(2:5,1:ic)
-#else
-         A(:,:) = 0
-         write(*,*) "ic = ", ic
-         A(2:5,1:ic) = Uf(2:5,1:ic)
-#endif
+
+         A(1,1:ic) = Uf(2,1:ic)
+         A(2,1:ic) = Uf(3,1:ic)
+         A(3,1:ic) = Uf(4,1:ic)
+         A(4,1:ic) = Uf(5,1:ic)
+
+!.... for adiabatic, use component 8 and switch adjoint BC to 5
 
 !.... compute the eigenvalues (only) of A and select the minimum eval
 
@@ -149,12 +149,12 @@
 !.... that satisfies the boundary conditions by solving an eigensystem
 !.... to determine the eigenvector cooresponding to the zero eigenvalue.
 
-#if 1
-       A(:,:) = Uf(2:5,1:ic)
-#else
-       A(:,:) = 0
-       A(2:5,1:ic) = Uf(2:5,1:ic)
-#endif
+       A(1,1:ic) = Uf(2,1:ic)
+       A(2,1:ic) = Uf(3,1:ic)
+       A(3,1:ic) = Uf(4,1:ic)
+       A(4,1:ic) = Uf(5,1:ic)
+
+!.... for adiabatic, use component 8 and switch adjoint BC to 5
 
        !write(*,*) "2: CGEEV"
        call CGEEV('N', 'V', ic, A, ic, eval, evec, &
@@ -182,7 +182,7 @@
 !.... make the phase reference consistent
 
        j = ny/2
-       efun = efun / exp( im * atan2(aimag(efun(2,j)),real(efun(2,j))))
+       efun = efun / exp(im*atan2(aimag(efun(2,j)),real(efun(2,j))))
 
 !.... normalize and output the eigenfunction if desired
 
@@ -199,7 +199,7 @@
 
 !.... normalize and output the eigenfunction
 
-       efun = efun / norm
+       if(norm_efun) efun = efun / norm
        open(15,file='efun.out')
        write(15,"('# alpha = ',1pe20.13,1x,1pe20.13)") alpha
        dy = ymax / real(ny-1)
@@ -208,6 +208,8 @@
          write(15,"(17(1pe13.6,1x))") y, &
            (real(efun(i,j)), aimag(efun(i,j)), i = 1, neq )
        end do
+!.... undo the normalization
+       if(norm_efun) efun = efun * norm
        close(15)
 
        end if

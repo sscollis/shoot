@@ -61,6 +61,7 @@
          A(1,:) = Uf(1,1:ic)
          A(2,:) = Uf(6,1:ic)
          A(3,:) = Uf(7,1:ic)
+         !A(4,:) = Uf(5,1:ic)
          A(4,:) = Uf(8,1:ic)
 
 !.... compute the eigenvalues (only) of A and select the minimum eval
@@ -120,6 +121,7 @@
        A(1,:) = Uf(1,1:ic)
        A(2,:) = Uf(6,1:ic)
        A(3,:) = Uf(7,1:ic)
+       A(4,:) = Uf(5,1:ic)
        A(4,:) = Uf(8,1:ic)
 
        call CGEEV('N', 'V', ic, A, ic, eval, evec, &
@@ -144,7 +146,7 @@
 !.... make the phase reference consistent
 
         j = ny/2
-        adj = adj / exp( im * atan2( aimag(adj(1,j)), real(adj(1,j)) ) )
+        adj = adj / exp(im*atan2(aimag(adj(1,j)),real(adj(1,j))))
 
 !.... normalize and output the eigenfunction if desired
 
@@ -161,7 +163,7 @@
 
 !.... normalize and output the eigenfunction
 
-         adj = adj / norm
+         if (norm_efun) adj = adj / norm
          open(15,file='adj.out')
          write(15,"('# alpha = ',1pe20.13,1x,1pe20.13)") alpha
          dy = ymax / real(ny-1)
@@ -170,6 +172,8 @@
            write(15,"(17(1pe13.6,1x))") y, &
              (real(adj(i,j)), aimag(adj(i,j)), i = 1, neq)
          end do
+!.... undo the normalization
+         if(norm_efun) adj = adj * norm
          close(15)
 
        end if
