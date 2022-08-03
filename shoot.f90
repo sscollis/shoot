@@ -56,7 +56,7 @@
           inquire(file=pname,exist=isparm)
           if (isparm) then
             nx = 0
-            write(*,'("Reading station information from",a,$)') pname
+            write(*,'("Reading station information from ",a,$)') trim(pname)
             open(iparm,file=pname,status='old',err=1000)
             !read(iparm,*,err=1000) nx
   20        continue
@@ -64,7 +64,7 @@
             if (tmp(1:1).ne.'#') nx = nx + 1
             goto 20
   30        continue
-            write(*,'("  with Nx = ",i4," stations")') nx
+            write(*,'(" with Nx = ",i4," stations")') nx
             rewind(iparm)
           else
             write(*,*) "ERROR: Either parm.dat or parm.nml must exist"
