@@ -361,7 +361,7 @@
 
 !.... some useful output statements when debugging
 
-#define DEBUG
+!#define DEBUG
 #ifdef DEBUG
           write(23,10) x(i), real(h1), aimag(h1), abs(h1),  &
                              real(h2), aimag(h2), abs(h2)
@@ -382,7 +382,7 @@
                              aimag(inprod(ndof, z3(:,j,i), dqdxy(:,j,i) )),   &
                              abs(inprod(ndof, z3(:,j,i), dqdxy(:,j,i) ))
 #endif
-#undef DEBUG
+!#undef DEBUG
         end do loop_h12
 
         close(20)  ! NPsigma

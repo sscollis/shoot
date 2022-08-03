@@ -133,16 +133,16 @@
          vec   = matmul( Ah, efun(:,j) ) + matmul( Ch, g2efun(:,j) )
 !#else
 !.... Ah maybe should be Ahp [SSC 2-23-97]
-!         vec   = matmul( Ahp, efun(:,j) ) + matmul( Ch, g2efun(:,j) )
+!        vec   = matmul( Ahp, efun(:,j) ) + matmul( Ch, g2efun(:,j) )
 !#endif
          c1(j) = inprod( neq, Z, vec )
 
 !.... Z1 is the part of h1 that must be dotted with g1efun
 !#ifdef OLD_WAY
-!         Z1(:,j) = two * matmul( Z, Bh )
+!        Z1(:,j) = two * matmul( Z, Bh )
 !#else
 !.... I think that Z1 should be zero [SSC 2-23-97]
-!         Z1(:,j) = zero
+         Z1(:,j) = zero
 !#endif
 !==============================================================================
 !                      C 2    C o m p u t a t i o n
@@ -166,7 +166,7 @@
          Z2(:,j) = matmul( Z, Ah )
 !#else
 !.... Ah maybe should be Ahp [SSC 2-23-97]
-!         Z2(:,j) = matmul( Z, Ahp )
+!        Z2(:,j) = matmul( Z, Ahp )
 !#endif
 !.... z3 is the part of h2 that must be dotted with g12efun
 
