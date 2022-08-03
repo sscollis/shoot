@@ -366,7 +366,6 @@
           write(23,10) x(i), real(h1), aimag(h1), abs(h1),  &
                              real(h2), aimag(h2), abs(h2)
           write(24,10) x(i), real(dalphadx(i)), aimag(dalphadx(i))
-
           j = ny-20
           write(25,10) x(i), real(c1(j,i)), aimag(c1(j,i)), abs(c1(j,i)),    &
                              real(c2(j,i)), aimag(c2(j,i)), abs(c2(j,i)),    &
@@ -376,6 +375,12 @@
                              abs(inprod(ndof, z2(:,j,i), dqdx(:,j,i) ))
           write(27,10) x(i), real(q(2,j,i)), aimag(q(2,j,i)), abs(q(2,j,i)), &
                              real(a(2,j,i)), aimag(a(2,j,i)), abs(a(2,j,i))
+          write(28,10) x(i), real(inprod(ndof, z1(:,j,i), dqdx(:,j,i) )),    &
+                             aimag(inprod(ndof, z1(:,j,i), dqdx(:,j,i) )),   &
+                             abs(inprod(ndof, z1(:,j,i), dqdx(:,j,i) ))
+          write(29,10) x(i), real(inprod(ndof, z3(:,j,i), dqdxy(:,j,i) )),    &
+                             aimag(inprod(ndof, z3(:,j,i), dqdxy(:,j,i) )),   &
+                             abs(inprod(ndof, z3(:,j,i), dqdxy(:,j,i) ))
 #endif
 #undef DEBUG
         end do loop_h12
