@@ -369,7 +369,8 @@
 
           j = ny-20
           write(25,10) x(i), real(c1(j,i)), aimag(c1(j,i)), abs(c1(j,i)),    &
-                             real(c2(j,i)), aimag(c2(j,i)), abs(c2(j,i))
+                             real(c2(j,i)), aimag(c2(j,i)), abs(c2(j,i)),    &
+                             real(c3(j,i)), aimag(c3(j,i)), abs(c3(j,i))
           write(26,10) x(i), real(inprod(ndof, z2(:,j,i), dqdx(:,j,i) )),    &
                              aimag(inprod(ndof, z2(:,j,i), dqdx(:,j,i) )),   &
                              abs(inprod(ndof, z2(:,j,i), dqdx(:,j,i) ))
