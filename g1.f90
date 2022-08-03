@@ -4,6 +4,8 @@
 !  Take the gradient in the streamwise direction
 !  updated to fourth order accurate differencing
 !
+!  Note: dx is assumed constant.
+!
 !=============================================================================!
         use stencils
         implicit none
