@@ -25,8 +25,6 @@
        integer :: j, k
 !=============================================================================!
 
-!#define OLD_WAY
-
        dy = ymax / real(ny-1)
 
 !.... loop over the normal index, go backwards in y since the eigenfunctions
@@ -103,11 +101,7 @@
 !.... now compute the inverse of Eh parallel and multiply through
 
          call inverse( neq, Ehp, Ehpinv)
-#if 0
-         Fhp = matmul( Ehpinv, Fh )  ! SSC: shouldn't this be Fhp?
-#else
-         Fhp = matmul( Ehpinv, Fhp ) ! SSC: shouldn't this be Fhp to get g2efun?
-#endif
+         Fhp = matmul( Ehpinv, Fhp )
 
 #ifdef OUTPUT_MATRICES
          write(*,*) "Ehpinv * Fh = "
@@ -127,26 +121,20 @@
 !==============================================================================
 !                      C 1    C o m p u t a t i o n
 !==============================================================================
+
 !.... c1 is the part of h1 that doesn't require g1efun
 !.... note that the full matrices are used here
-!#ifdef OLD_WAY
+
          vec   = matmul( Ah, efun(:,j) ) + matmul( Ch, g2efun(:,j) )
-!#else
-!.... Ah maybe should be Ahp [SSC 2-23-97]
-!        vec   = matmul( Ahp, efun(:,j) ) + matmul( Ch, g2efun(:,j) )
-!#endif
          c1(j) = inprod( neq, Z, vec )
 
-!.... Z1 is the part of h1 that must be dotted with g1efun
-!#ifdef OLD_WAY
-!        Z1(:,j) = two * matmul( Z, Bh )
-!#else
-!.... I think that Z1 should be zero [SSC 2-23-97]
+!.... Z1 is the part of h1 that must be dotted with g1efun (zero)
+
          Z1(:,j) = zero
-!#endif
 !==============================================================================
 !                      C 2    C o m p u t a t i o n
 !==============================================================================
+
 !.... c2 is the part of h2 that doesn't require g1efun or g12efun but
 !.... does require g1alpha
 
@@ -154,20 +142,13 @@
          c2(j) = inprod( neq, Z, vec )
 
 !.... c3 is the part of h2 that doesn't require g1efun, g12efun, or g1alpha
-!.... These terms are due to the nonparallel meanflow
-
-!.... SSC:  this is supposed to be -L1(\hat U_0)
+!.... These terms are due to the nonparallel meanflow:  -L1(\hat U_0)
 
          vec = -one * ( matmul( Ehn, g2efun(:,j) ) + matmul( Fhn, efun(:,j) ) )
          c3(j) = inprod( neq, Z, vec )
 
-!.... Z2 is the part of h2 that must be dotted with g1efun
-!#ifdef OLD_WAY
          Z2(:,j) = matmul( Z, Ah )
-!#else
-!.... Ah maybe should be Ahp [SSC 2-23-97]
-!        Z2(:,j) = matmul( Z, Ahp )
-!#endif
+
 !.... z3 is the part of h2 that must be dotted with g12efun
 
          Z3(:,j) = matmul( Z, Ch )
