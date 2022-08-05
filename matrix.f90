@@ -13,7 +13,7 @@
 
         real :: y
         complex :: Ah(neq,neq), Bh(neq,neq), Ch(neq,neq), &
-             Eh(neq,neq), Fh(neq,neq)
+                   Eh(neq,neq), Fh(neq,neq)
 
         real :: vm(ndof)
         real :: A(ndof,ndof), C(ndof,ndof)
