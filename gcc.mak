@@ -19,13 +19,9 @@ ifdef USE_ODEINT
   DEFINES += -DUSE_ODEINT
 endif
 #
-<<<<<<< HEAD
 OPT      = -O2
 DEBUG    = -g -fbounds-check
-=======
 DEFINES  += $(ADDONS)
-DEBUG    = -g -O2 -fbounds-check
->>>>>>> ab18500011e4b29da02d3ebf2e0873e4927d4f8c
 TRAP     = -ffpe-trap=invalid
 #TRAP    = -ffpe-trap=invalid,zero,overflow 
 FFLAGS   = -fdefault-real-8 -fdefault-double-8 -ffixed-line-length-120 \
