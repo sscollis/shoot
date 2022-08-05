@@ -325,6 +325,30 @@
       end
 
 !=============================================================================!
+      function C1INPROD(n, v1, v2)
+!=============================================================================!
+!
+!.... Perform and inner product on two complex vectors, v1 and v2
+!.... using the conjugate of the first vector
+!
+!=============================================================================!
+      implicit none
+
+      integer :: n
+      complex :: v1(n), v2(n)
+      complex :: C1INPROD
+      integer :: i
+!=============================================================================!
+
+      C1INPROD = 0.0
+      do i = 1, n
+        C1INPROD = C1INPROD + conjg(v1(i)) * v2(i)
+      end do
+
+      return
+      end
+
+!=============================================================================!
       function CINPROD(n, v1, v2)
 !=============================================================================!
 !
@@ -332,7 +356,7 @@
 !.... using the conjugate of the second vector
 !
 !.... Note that this is a slightly weird definition of the
-!.... complex inner-produce
+!.... complex inner-product
 !=============================================================================!
       implicit none
 

@@ -10,9 +10,9 @@
 
        complex, allocatable :: A(:,:)
 
-       integer :: icount, mcount=1
+       integer :: icount, mcount=1, ind
 
-       real :: tol = 0.2, y, dy
+       real :: tol=0.2, y, dy
 
 !.... eigenvalue iteration variables
 
@@ -59,7 +59,10 @@
          A(1,:) = Uf(1,1:ic)
          A(2,:) = Uf(6,1:ic)
          A(3,:) = Uf(7,1:ic)
-         !A(4,:) = Uf(8,1:ic)
+#if 1
+         A(4,:) = Uf(8,1:ic)   ! SSC 7/30:  this was turned off
+                               ! turning on nails the adjoint eff to 1e-10
+#endif
 
 !.... compute the eigenvalues (only) of A and select the minimum eval
 
@@ -67,13 +70,17 @@
                     ic, evec, ic, work, lwork, rwork, info)
 
          err = eval(1)
+         ind = 1
          do i = 2, ic
-           if ( abs(eval(i)) .le. abs(err) ) err = eval(i)
+           if ( abs(eval(i)) .le. abs(err) ) then
+             err = eval(i)
+             ind = i
+           endif 
          end do
 
-         write (*,30) icount, real(alpha), aimag(alpha), &
+         write (*,30) icount, ind, real(alpha), aimag(alpha), &
                       real(err), aimag(err), abs(err)
-30       format (1x,i2,2(2x,1pe13.6,1x,1pe13.6),2x,1pe13.6)
+30       format (1x,i2,1x,i2,2(2x,1pe13.6,1x,1pe13.6),2x,1pe13.6)
 
          if ( (abs(err) .ge. eps8) .and. (icount .lt. mcount) ) then
 
@@ -118,7 +125,9 @@
        A(1,:) = Uf(1,1:ic)
        A(2,:) = Uf(6,1:ic)
        A(3,:) = Uf(7,1:ic)
-       !A(4,:) = Uf(8,1:ic)
+#if 1
+       A(4,:) = Uf(8,1:ic)   ! SSC:  turned back on 7/30/22
+#endif
 
        call CGEEV('N', 'V', ic, A, ic, eval, evec, &
                   ic, evec, ic, work, lwork, rwork, info)
@@ -132,7 +141,6 @@
            BC(1:ic) = evec(:,i)
          end if
        end do
-       !write(*,*) "adjsolv deallocate"
        deallocate( A, work, rwork, eval, evec )
 
        ievec = 1
@@ -169,6 +177,10 @@
              (real(adj(i,j)), aimag(adj(i,j)), i = 1, neq)
          end do
          close(15)
+
+!.... un-normalized for use in constructing nonparallel corrections
+
+         adj = adj * norm
 
        end if
 

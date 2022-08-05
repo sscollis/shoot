@@ -1,15 +1,15 @@
 !=============================================================================!
-      subroutine adjder( neq, Q, y, dQ )
+      subroutine adjder( neq, Z, y, dZ )
 !=============================================================================!
       implicit none
       
       integer :: neq
       real    :: y
-      complex :: Q(neq), dQ(neq)
+      complex :: Z(neq), dZ(neq)
       
 !.... local variables
 
-      complex :: Eh(neq,neq), Fh(neq,neq), Ehinv(neq,neq)
+      complex :: Eh(neq,neq), Fh(neq,neq), Ehinv(neq,neq), Fht(neq,neq)
 
 !.... local variables for Lapack routines
 
@@ -29,8 +29,8 @@
       
 !.... Form the derivative
       
-      Fh = transpose( Fh )
-      dQ = matmul( Fh, Q )
+      Fht = transpose( Fh )
+      dZ = matmul( Fht, Z )
       
       return
       end

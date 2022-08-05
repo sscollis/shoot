@@ -19,20 +19,21 @@ ifdef USE_ODEINT
   DEFINES += -DUSE_ODEINT
 endif
 #
+OPT      = -O2
 DEBUG    = -g -fbounds-check
-#TRAP     = -ffpe-trap=invalid
+TRAP     = -ffpe-trap=invalid
 #TRAP    = -ffpe-trap=invalid,zero,overflow 
 FFLAGS   = -fdefault-real-8 -fdefault-double-8 -ffixed-line-length-120 \
-           -cpp -std=legacy $(DEFINES) $(TRAP) $(DEBUG) -c
-F90FLAGS = -fdefault-real-8 -fdefault-double-8 -cpp $(DEFINES) \
+           -cpp -std=legacy $(DEFINES) $(OPT) $(TRAP) $(DEBUG) -c
+F90FLAGS = -fdefault-real-8 -fdefault-double-8 -cpp $(DEFINES) $(OPT) \
            $(TRAP) $(DEBUG) -c
-OFLAGS   = $(DEBUG) 
+OFLAGS   = $(OPT) $(DEBUG) 
 LIB      = -L/usr/local/opt/openblas/lib -lopenblas
 FC       = gfortran
 #
 # Three different ways to read and work with mean flow
 #
-MEAN = mean.o
+MEAN   = mean.o
 MEAN2D = mean-2d.o
 MEANBL = mean-bl.o
 
