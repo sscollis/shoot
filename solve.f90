@@ -12,7 +12,7 @@
 
        integer :: icount, mcount=20, ind
 
-       real :: tol = 0.2, y, dy
+       real :: tol=0.2, y, dy
 
 !.... eigenvalue iteration variables
 
