@@ -3,7 +3,7 @@
 #
 #  Author:  Scott Collis
 #
-#  Revised: 5/9/2022
+#  Revised: 8/3/2022
 #
 #==============================================================================
 NAME   = shoot
@@ -19,8 +19,13 @@ ifdef USE_ODEINT
   DEFINES += -DUSE_ODEINT
 endif
 #
+<<<<<<< HEAD
 OPT      = -O2
 DEBUG    = -g -fbounds-check
+=======
+DEFINES  += $(ADDONS)
+DEBUG    = -g -O2 -fbounds-check
+>>>>>>> ab18500011e4b29da02d3ebf2e0873e4927d4f8c
 TRAP     = -ffpe-trap=invalid
 #TRAP    = -ffpe-trap=invalid,zero,overflow 
 FFLAGS   = -fdefault-real-8 -fdefault-double-8 -ffixed-line-length-120 \
@@ -66,12 +71,15 @@ all: $(NAME) $(NAME)-2d $(NAME)-bl
 
 $(NAME): $(MODS) $(OBJECTS) $(OBJS1) $(MEAN) $(OBJS2) $(OBJS3)
 	$(FC) $(OFLAGS) $(MODS) $(OBJECTS) $(MEAN) $(OBJS1) $(OBJS2) $(OBJS3) $(LIB) -o $(NAME)
+	\cp $(NAME) $(NAME).exe
 
 $(NAME)-2d: $(MODS) $(OBJECTS) $(OBJS1) $(MEAN2D) $(OBJS2) $(OBJS3)
 	$(FC) $(OFLAGS) $(MODS) $(OBJECTS) $(MEAN2D) $(OBJS1) $(OBJS2) $(OBJS3) $(LIB) -o $(NAME)-2d
+	\cp $(NAME)-2d $(NAME)-2d.exe
 
 $(NAME)-bl: $(MODS) $(OBJECTS) $(OBJS1) $(MEANBL) $(OBJS2) $(OBJS3)
 	$(FC) $(OFLAGS) $(MODS) $(OBJECTS) $(MEANBL) $(OBJS1) $(OBJS2) $(OBJS3) $(LIB) -o $(NAME)-bl 
+	\cp $(NAME)-bl $(NAME)-bl.exe
 
 $(OBJECTS): global.o
 	$(FC) $(F90FLAGS) $*.f90

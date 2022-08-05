@@ -41,8 +41,8 @@ subroutine input
 
 !.... get the fluid properties at the reference state
 
-  call getmat(te, rmue, rlme, cone, dmue, d2mue, &
-              dlme, d2lme, dcone, d2cone)
+  call sgetmat(te, rmue, rlme, cone, dmue, d2mue, &
+               dlme, d2lme, dcone, d2cone)
 
   write (*,"('Enter ny, Ymax ==> ',$)")
   read (*,*) ny, ymax
@@ -51,8 +51,7 @@ subroutine input
 
   !write (*,"('Enter alphar, alphai ==> ',$)")
   !read (*,*) alphar, alphai
-  alphar = 0
-  alphai = 0
+  alphar = 0; alphai = 0
   write (*,"('Enter betar, betai ==> ',$)")
   read (*,*) betar, betai
   write (*,"('Enter omegar, omegai ==> ',$)")
@@ -97,7 +96,6 @@ subroutine input
 
   write(*,*)
   write(*,NML=shoot)
-  write(*,*)
 
   return
   end subroutine input

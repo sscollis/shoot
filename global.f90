@@ -14,6 +14,8 @@
       integer :: maxIter = 50
       logical :: useParallel = .true.
       logical :: outputNonparallel = .true.
+      logical :: forceParallel = .false.
+      logical :: norm_efun = .false.
 
 !.... flags
 
@@ -84,8 +86,8 @@
         end subroutine getmat
         subroutine sgetmat(t, mu, lm, con, &
                            dmu, d2mu, dlm, d2lm, dcon, d2con)
-          real t, mu, lm, con, dmu, d2mu, dlm, d2lm
-          real dcon, d2con
+          real t, mu, lm, con, dmu, d2mu
+          real dlm, d2lm, dcon, d2con
         end subroutine sgetmat
       end interface
 

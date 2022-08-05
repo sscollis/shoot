@@ -20,6 +20,8 @@
        complex :: At, Bt, Ct, qt, fd
        real    :: fdxr, fdxi, fdyr, fdyi
 
+       complex :: dp=0
+       complex, external :: inprod
        external adjder
 
 !.... For Lapack eigensolver
@@ -59,10 +61,7 @@
          A(1,:) = Uf(1,1:ic)
          A(2,:) = Uf(6,1:ic)
          A(3,:) = Uf(7,1:ic)
-#if 1
-         A(4,:) = Uf(8,1:ic)   ! SSC 7/30:  this was turned off
-                               ! turning on nails the adjoint eff to 1e-10
-#endif
+         A(4,:) = Uf(8,1:ic)
 
 !.... compute the eigenvalues (only) of A and select the minimum eval
 
@@ -125,9 +124,7 @@
        A(1,:) = Uf(1,1:ic)
        A(2,:) = Uf(6,1:ic)
        A(3,:) = Uf(7,1:ic)
-#if 1
-       A(4,:) = Uf(8,1:ic)   ! SSC:  turned back on 7/30/22
-#endif
+       A(4,:) = Uf(8,1:ic)
 
        call CGEEV('N', 'V', ic, A, ic, eval, evec, &
                   ic, evec, ic, work, lwork, rwork, info)
@@ -150,7 +147,7 @@
 !.... make the phase reference consistent
 
         j = ny/2
-        adj = adj / exp( im * atan2( aimag(adj(1,j)), real(adj(1,j)) ) )
+        adj = adj / exp(im*atan2(aimag(adj(1,j)),real(adj(1,j))))
 
 !.... normalize and output the eigenfunction if desired
 
@@ -167,7 +164,7 @@
 
 !.... normalize and output the eigenfunction
 
-         adj = adj / norm
+         if (norm_efun) adj = adj / norm
          open(15,file='adj.out')
          write(15,"('# alpha = ',1pe20.13,1x,1pe20.13)") alpha
          dy = ymax / real(ny-1)
@@ -176,6 +173,8 @@
            write(15,"(17(1pe13.6,1x))") y, &
              (real(adj(i,j)), aimag(adj(i,j)), i = 1, neq)
          end do
+!.... undo the normalization
+         if(norm_efun) adj = adj * norm
          close(15)
 
 !.... un-normalized for use in constructing nonparallel corrections
@@ -183,6 +182,18 @@
          adj = adj * norm
 
        end if
+
+!... Test orthogonality
+
+       dp = zero
+       j = 1
+       dp = dp + pt5 * dy * inprod(ndof,adj(:,j),efun(:,j))
+       do j = 2, ny-1
+         dp = dp + dy * inprod(ndof,adj(:,j),efun(:,j))
+       enddo
+       j = ny
+       dp = dp + pt5 * dy * inprod(ndof,adj(:,j),efun(:,j))
+       write(*,'(/,"inprod(adj,efun) = ",2(1e13.6,1x))') dp
 
        return
        end subroutine adjsolv

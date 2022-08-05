@@ -37,7 +37,7 @@
 
        call initial( Ui, ic )
 
-#if VERBOSE >=3
+#if VERBOSE>=3
        write(*,*) "Ui = ", Ui(:,:)
 #endif
 
@@ -55,12 +55,12 @@
          icount = icount + 1
 
 !.... integrate the equations using orthonomalization
-#if VERBOSE >=3
+#if VERBOSE>=3
          write(*,*) "Starting Conte integration"
 #endif
          call conte( ny-1, tol, neq, ic, Ui, Uf, ymax, zero, ievec, &
                      parder, BC, efun )
-#if VERBOSE >=3
+#if VERBOSE>=3
          write(*,*) "Uf = ", Uf(:,:)
 #endif
 
@@ -71,24 +71,24 @@
            write(*,*) "ic = ",ic," which is not 4"
            call exit(1)
          endif
-#if 1
-         A(:,:) = Uf(2:5,1:ic)
-#else
-         A(:,:) = 0
-         write(*,*) "ic = ", ic
-         A(2:5,1:ic) = Uf(2:5,1:ic)
-#endif
+
+         A(1,1:ic) = Uf(2,1:ic)
+         A(2,1:ic) = Uf(3,1:ic)
+         A(3,1:ic) = Uf(4,1:ic)
+         A(4,1:ic) = Uf(5,1:ic)
+
+!.... for adiabatic, use component 8 and switch adjoint BC to 5
 
 !.... compute the eigenvalues (only) of A and select the minimum eval
 
-#if VERBOSE >=3
+#if VERBOSE>=3
          write(*,*) "Calling [CZ]EEV: ic = ",ic
          write(*,*) "A = ", A(:,:)
          write(*,*) "CGEEV"
 #endif
          call CGEEV('N', 'N', ic, A, ic, eval, evec, &
                     ic, evec, ic, work, lwork, rwork, info)
-#if VERBOSE >=3
+#if VERBOSE>=3
          write(*,*) "Finished [CZ]EEV..."
 #endif
          err = eval(1)
@@ -149,12 +149,12 @@
 !.... that satisfies the boundary conditions by solving an eigensystem
 !.... to determine the eigenvector cooresponding to the zero eigenvalue.
 
-#if 1
-       A(:,:) = Uf(2:5,1:ic)
-#else
-       A(:,:) = 0
-       A(2:5,1:ic) = Uf(2:5,1:ic)
-#endif
+       A(1,1:ic) = Uf(2,1:ic)
+       A(2,1:ic) = Uf(3,1:ic)
+       A(3,1:ic) = Uf(4,1:ic)
+       A(4,1:ic) = Uf(5,1:ic)
+
+!.... for adiabatic, use component 8 and switch adjoint BC to 5
 
        !write(*,*) "2: CGEEV"
        call CGEEV('N', 'V', ic, A, ic, eval, evec, &
@@ -182,7 +182,7 @@
 !.... make the phase reference consistent
 
        j = ny/2
-       efun = efun / exp( im * atan2(aimag(efun(2,j)),real(efun(2,j))))
+       efun = efun / exp(im*atan2(aimag(efun(2,j)),real(efun(2,j))))
 
 !.... normalize and output the eigenfunction if desired
 
@@ -199,7 +199,7 @@
 
 !.... normalize and output the eigenfunction
 
-       efun = efun / norm
+       if(norm_efun) efun = efun / norm
        open(15,file='efun.out')
        write(15,"('# alpha = ',1pe20.13,1x,1pe20.13)") alpha
        dy = ymax / real(ny-1)
@@ -208,6 +208,8 @@
          write(15,"(17(1pe13.6,1x))") y, &
            (real(efun(i,j)), aimag(efun(i,j)), i = 1, neq )
        end do
+!.... undo the normalization
+       if(norm_efun) efun = efun * norm
        close(15)
 
        end if

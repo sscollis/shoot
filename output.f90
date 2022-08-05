@@ -22,10 +22,8 @@
        complex :: Z(neq), Z1(neq,ny), Z2(neq,ny), Z3(neq,ny)
 
        real    :: y, dy
-       integer :: j
+       integer :: j, k
 !=============================================================================!
-
-!#define OLD_WAY
 
        dy = ymax / real(ny-1)
 
@@ -40,9 +38,47 @@
 
          call parallel( y, Ehp, Fhp, 1, Ahp)
 
+#ifdef OUTPUT_MATRICES
+         write(*,*) "Ehp = "
+         do k=1,neq
+           write(*,"(*('('sf8.2xspf8.2x'i)':x))") Ehp(:,k)
+         end do
+         write(*,*) "Fhp = "
+         do k=1,neq
+           write(*,"(*('('sf8.2xspf8.2x'i)':x))") Fhp(:,k)
+         end do
+         write(*,*) "Ahp = "
+         do k=1,neq
+           write(*,"(*('('sf8.2xspf8.2x'i)':x))") Ahp(:,k)
+         end do
+#endif
+
 !.... compute the "full" matrices
 
          call matrix( y, Ah, Bh, Ch, Eh, Fh )
+
+#ifdef OUTPUT_MATRICES
+         write(*,*) "Ah = "
+         do k=1,neq
+           write(*,"(*('('sf8.2xspf8.2x'i)':x))") Ah(:,k)
+         end do
+         write(*,*) "Bh = "
+         do k=1,neq
+           write(*,"(*('('sf8.2xspf8.2x'i)':x))") Bh(:,k)
+         end do
+         write(*,*) "Ch = "
+         do k=1,neq
+           write(*,"(*('('sf8.2xspf8.2x'i)':x))") Ch(:,k)
+         end do
+         write(*,*) "Eh = "
+         do k=1,neq
+           write(*,"(*('('sf8.2xspf8.2x'i)':x))") Eh(:,k)
+         end do
+         write(*,*) "Fh = "
+         do k=1,neq
+           write(*,"(*('('sf8.2xspf8.2x'i)':x))") Fh(:,k)
+         end do
+#endif
 
 !.... form the "nonparallel" matrices which are just the difference
 !.... of the full matrices and the parallel matrices (i.e. they are the
@@ -50,11 +86,29 @@
 
          Ehn = Eh - Ehp
          Fhn = Fh - Fhp
+         
+#ifdef OUTPUT_MATRICES
+         write(*,*) "Ehn = "
+         do k=1,neq
+           write(*,"(*('('sf8.2xspf8.2x'i)':x))") Ehn(:,k)
+         end do
+         write(*,*) "Fhn "
+         do k=1,neq
+           write(*,"(*('('sf8.2xspf8.2x'i)':x))") Fhn(:,k)
+         end do
+#endif
 
 !.... now compute the inverse of Eh parallel and multiply through
 
          call inverse( neq, Ehp, Ehpinv)
-         Fhp = matmul( Ehpinv, Fh )        !SSC: shouldn't this be Fhp?
+         Fhp = matmul( Ehpinv, Fhp )
+
+#ifdef OUTPUT_MATRICES
+         write(*,*) "Ehpinv * Fh = "
+         do k=1,neq
+           write(*,"(*('('sf8.2xspf8.2x'i)':x))") Fhp(:,k)
+         end do
+#endif
 
 !.... use the parallel equations to compute the derivative of efun wrt y
 
@@ -67,45 +121,34 @@
 !==============================================================================
 !                      C 1    C o m p u t a t i o n
 !==============================================================================
+
 !.... c1 is the part of h1 that doesn't require g1efun
 !.... note that the full matrices are used here
-#ifdef OLD_WAY
+
          vec   = matmul( Ah, efun(:,j) ) + matmul( Ch, g2efun(:,j) )
-#else
-!.... Ah maybe should be Ahp [SSC 2-23-97]
-         vec   = matmul( Ahp, efun(:,j) ) + matmul( Ch, g2efun(:,j) )
-#endif
          c1(j) = inprod( neq, Z, vec )
 
-!.... Z1 is the part of h1 that must be dotted with g1efun
-#ifdef OLD_WAY
-         Z1(:,j) = two * matmul( Z, Bh )
-#else
-!.... I think that Z1 should be zero [SSC 2-23-97]
+!.... Z1 is the part of h1 that must be dotted with g1efun (zero)
+
          Z1(:,j) = zero
-#endif
 !==============================================================================
 !                      C 2    C o m p u t a t i o n
 !==============================================================================
+
 !.... c2 is the part of h2 that doesn't require g1efun or g12efun but
 !.... does require g1alpha
 
-         vec   = im * matmul( Bh, efun(:,j) )
+         vec   = -im * matmul( Bh, efun(:,j) )
          c2(j) = inprod( neq, Z, vec )
 
 !.... c3 is the part of h2 that doesn't require g1efun, g12efun, or g1alpha
-!.... These terms are due to the nonparallel meanflow
+!.... These terms are due to the nonparallel meanflow:  -L1(\hat U_0)
 
          vec = -one * ( matmul( Ehn, g2efun(:,j) ) + matmul( Fhn, efun(:,j) ) )
          c3(j) = inprod( neq, Z, vec )
 
-!.... Z2 is the part of h2 that must be dotted with g1efun
-#ifdef OLD_WAY
          Z2(:,j) = matmul( Z, Ah )
-#else
-!.... Ah maybe should be Ahp [SSC 2-23-97]
-         Z2(:,j) = matmul( Z, Ahp )
-#endif
+
 !.... z3 is the part of h2 that must be dotted with g12efun
 
          Z3(:,j) = matmul( Z, Ch )
