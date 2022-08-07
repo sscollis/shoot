@@ -12,11 +12,13 @@ ln -s gcc.mak Makefile
 make USE_NR=1
 ```
 Note that there are three options in building depending on the type of
-mean flow file that you wish to use (this should really be a runtime
-option).  Set `MEAN_2D=1` to use an LNS file for the mean flow profile
-(this should be on a body-fitted mesh) and use `MEAN_BL=1` to use a BL
-file.  The default is to read the mean flow from a collection of 
-profile (note that `npost` can generate profiles from an LNS file).
+mean flow file that you wish to use and there are three different versions of 
+the code built for each type of mean flow: `shoot` works with a collection of 
+2d profiles.  `shoot-2d` uses a special body-fitted mesh generated using 
+`npost -l` when run on a LNS3D mean solution file. Finally, there is an experimental
+version called `shoot-bl` that uses a BL format from NASA. 
+The standard quasi-parallel linear stability analysis generally uses `shoot` while 
+You must use `shoot-2d` to incorporate nonparallel effects.  NOTE: that `npost -p` can generate profiles from an LNS mean flow file for use by `shoot`. 
 
 ## Running
 
@@ -35,8 +37,8 @@ adjoints, and include nonparallel effects.
    so that you need to provide that (or implement another root finder)
 2. I like `zeroin` function that is publically available on Netlib and
    that would be trivial to implement.
-3. I have only tested the forward and adjoint solvers, not yet the nonparallel
-   terms so please USE WITH CAUTION.
-
+3. I have tested the forward, adjoint solvers and nonparallel correction
+   terms.  See the `lns3d/test/pcyl` case for an example. 
+ 
 S. Scott Collis\
 flow.physics.simulation@gmail.com
