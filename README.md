@@ -39,6 +39,10 @@ adjoints, and include nonparallel effects.
    that would be trivial to implement.
 3. I have tested the forward, adjoint solvers and nonparallel correction
    terms.  See the `lns3d/test/pcyl` case for an example. 
+   
+## Tests 
  
+The test runs for `shoot` are found in the `stab` and `lns3d` repositories. 
+
 S. Scott Collis\
 flow.physics.simulation@gmail.com
