@@ -1,36 +1,61 @@
-# This is a basic workflow to help you get started with Actions
+name: Makefile CI MacOS
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    runs-on: macos-latest
+
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v3
+    
+    - name: checkout NR-utilties
+      uses: actions/checkout@v3
+      with:  
+        repository: sscollis/NR-utilities
+        token: ${{ secrets.GH_PAT }}
+        path:  NR-utilities
+    
+    - name: configure NR-utilities
+      run:  cd NR-utilities && ln -s gcc.mak Makefile
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+    - name: build NR-utilities
+      run:  cd NR-utilities && make CC=gcc FC=gfortran-11 CC=gcc-11 F77=gfortran-11 
+      
+    - name: checkout fsc
+      uses: actions/checkout@v3
+      with:
+        repository: sscollis/fsc
+        path: fsc
+        
+    - name: configure fsc
+      run:  cd fsc && ln -s gcc.mak Makefile
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+    - name: build fsc
+      run:  cd fsc && make CC=gcc FC=gfortran-11 CC=gcc-11 F77=gfortran-11
+      
+    - name: install fsc
+      run:  ls $GITHUB_WORKSPACE && echo break && ls $GITHUB_WORKSPACE/..
+    
+    - name: print Github environment
+      run: env | sort
+      
+    #- name: Add util to path
+    #  run: echo "$GITHUB_WORKSPACE/util" >> $GITHUB_PATH
+      
+    - name: echo paths
+      run: echo $HOME && echo $GITHUB_WORKSPACE && echo $PATH
+
+    #- name: install OpenBLAS
+    #  run: brew install openblas
+       
+    - name: configure shoot
+      run: ln -s gcc.mak Makefile
+      
+    - name: build shoot
+      run: make CC=gcc FC=gfortran-11 CC=gcc-11 F77=gfortran-11 LIBNR_DIR=$GITHUB_WORKSPACE/NR-utilities
