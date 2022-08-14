@@ -29,7 +29,18 @@ FFLAGS   = -fdefault-real-8 -fdefault-double-8 -ffixed-line-length-120 \
 F90FLAGS = -fdefault-real-8 -fdefault-double-8 -cpp $(DEFINES) $(OPT) \
            $(TRAP) $(DEBUG) -c
 OFLAGS   = $(OPT) $(DEBUG) 
+ifdef USE_LOCAL_OPENBLAS
+LIB      = -L$(HOME)/local/OpenBLAS/lib -lopenblas
+else ifdef USE_HOMEBREW_OPENBLAS
 LIB      = -L/usr/local/opt/openblas/lib -lopenblas
+else ifdef USE_APPLEBREW_OPENBLAS
+LIB      = -L/opt/homebrew/opt/openblas/lib -lopenblas
+else ifdef USE_LINUXBREW_OPENBLAS
+LIB      = -L/home/linuxbrew/.linuxbrew/opt/openblas/lib -lopenblas
+else
+LIB      = -L$(HOME)/local/OpenBLAS/lib -lopenblas
+endif
+#LIB      = -L/usr/local/opt/openblas/lib -lopenblas
 FC       = gfortran
 #
 # Three different ways to read and work with mean flow
