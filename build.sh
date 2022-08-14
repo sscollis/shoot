@@ -10,5 +10,5 @@
 #
 # this one works
 #
-make clean && make USE_NR=1
+make clean && make USE_NR=1 $@
 exit 0
