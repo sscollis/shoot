@@ -29,6 +29,10 @@ FFLAGS   = -fdefault-real-8 -fdefault-double-8 -ffixed-line-length-120 \
 F90FLAGS = -fdefault-real-8 -fdefault-double-8 -cpp $(DEFINES) $(OPT) \
            $(TRAP) $(DEBUG) -c
 OFLAGS   = $(OPT) $(DEBUG) 
+#
+# Tailor setup for OpenBLAS from HomeBrew depending on platform (Apple Intel,
+# Apple Silicon, or Linux)
+#
 ifdef USE_LOCAL_OPENBLAS
 LIB      = -L$(HOME)/local/OpenBLAS/lib -lopenblas
 else ifdef USE_HOMEBREW_OPENBLAS
@@ -107,4 +111,4 @@ $(OBJS3):
 	$(F77) $(FFLAGS) $*.f
 
 clean:
-	$(RM) *.o *.mod $(NAME)
+	$(RM) *.o *.mod $(NAME) $(NAME)-2d $(NAME)-bl *.exe

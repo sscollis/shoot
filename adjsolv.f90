@@ -178,12 +178,14 @@
          close(15)
 
 !.... un-normalized for use in constructing nonparallel corrections
+!.... SSC:  was doing this twice?
 
-         adj = adj * norm
+!        adj = adj * norm
 
        end if
 
-!... Test orthogonality
+!... Test orthogonality (this uses Trapezoidal but the real integrator is
+!... RK4 so that there is considerable error here)
 
        dp = zero
        j = 1
@@ -193,7 +195,7 @@
        enddo
        j = ny
        dp = dp + pt5 * dy * inprod(ndof,adj(:,j),efun(:,j))
-       write(*,'(/,"inprod(adj,efun) = ",2(1e13.6,1x))') dp
+       write(*,'(/,"inprod(adj,efun) [trapezoidal]= ",2(1e13.6,1x))') dp
 
        return
        end subroutine adjsolv
