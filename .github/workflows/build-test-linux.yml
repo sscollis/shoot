@@ -1,0 +1,64 @@
+name: Makefile CI Ubuntu
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: checkout NR-utilties
+      uses: actions/checkout@v3
+      with:  
+        repository: sscollis/NR-utilities
+        token: ${{ secrets.GH_PAT }}
+        path:  NR-utilities
+    
+    - name: configure NR-utilities
+      run:  cd NR-utilities && ln -s gcc.mak Makefile
+
+    - name: build NR-utilities
+      run:  cd NR-utilities && make CC=gcc FC=gfortran-11 CC=gcc-11 F77=gfortran-11 
+      
+    - name: checkout fsc
+      uses: actions/checkout@v3
+      with:
+        repository: sscollis/fsc
+        path: fsc
+        
+    - name: configure fsc
+      run:  cd fsc && ln -s gcc.mak Makefile
+
+    - name: build fsc
+      run:  cd fsc && make CC=gcc FC=gfortran-11 CC=gcc-11 F77=gfortran-11
+      
+    - name: install fsc
+      run:  ls $GITHUB_WORKSPACE && echo break && ls $GITHUB_WORKSPACE/..
+    
+    - name: print Github environment
+      run: env | sort
+      
+    #- name: Add util to path
+    #  run: echo "$GITHUB_WORKSPACE/util" >> $GITHUB_PATH
+      
+    - name: echo paths
+      run: echo $HOME && echo $GITHUB_WORKSPACE && echo $PATH
+
+    #- name: install OpenBLAS
+    #  run: brew install openblas
+       
+    - name: configure shoot
+      run: ln -s gcc.mak Makefile
+      
+    - name: build shoot
+      run: make CC=gcc FC=gfortran-11 CC=gcc-11 F77=gfortran-11 USE_LINUXBREW_OPENBLAS=1 LIBNR_DIR=$GITHUB_WORKSPACE/NR-utilities
+ 
+    - name: test shoot
+      run:  cd test; ./run.sh
