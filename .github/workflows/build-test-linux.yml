@@ -25,7 +25,7 @@ jobs:
       run:  cd NR-utilities && ln -s gcc.mak Makefile
 
     - name: build NR-utilities
-      run:  cd NR-utilities && make CC=gcc FC=gfortran-11 CC=gcc-11 F77=gfortran-11 
+      run:  cd NR-utilities && make
       
     - name: checkout fsc
       uses: actions/checkout@v3
@@ -37,7 +37,7 @@ jobs:
       run:  cd fsc && ln -s gcc.mak Makefile
 
     - name: build fsc
-      run:  cd fsc && make CC=gcc FC=gfortran-11 CC=gcc-11 F77=gfortran-11
+      run:  cd fsc && make
       
     - name: install fsc
       run:  ls $GITHUB_WORKSPACE && echo break && ls $GITHUB_WORKSPACE/..
@@ -58,7 +58,7 @@ jobs:
       run: ln -s gcc.mak Makefile
       
     - name: build shoot
-      run: make CC=gcc FC=gfortran-11 CC=gcc-11 F77=gfortran-11 USE_LINUXBREW_OPENBLAS=1 LIBNR_DIR=$GITHUB_WORKSPACE/NR-utilities
+      run: make USE_LINUXBREW_OPENBLAS=1 LIBNR_DIR=$GITHUB_WORKSPACE/NR-utilities
  
     - name: test shoot
       run:  cd test; ./run.sh
