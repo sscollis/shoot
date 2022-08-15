@@ -299,7 +299,25 @@
       end
 
 !=============================================================================!
-      function INPROD(n, v1, v2)
+      function inprod(n, v1, v2)
+!=============================================================================!
+!
+!.... Pick which inner-product you wish to use 
+!
+!=============================================================================!
+      implicit none
+      integer :: n
+      complex :: v1(n), v2(n)
+      complex :: inprod
+      complex, external :: cinprod, c1inprod, ninprod
+!=============================================================================!
+      !inprod =  cinprod(n, v1, v2) 
+      !inprod = c1inprod(n, v1, v2) 
+      inprod  =  ninprod(n, v1, v2) 
+      return
+      end
+!=============================================================================!
+      function ninprod(n, v1, v2)
 !=============================================================================!
 !
 !.... Perform and inner product on two complex vectors, v1 and v2
@@ -307,25 +325,21 @@
 !
 !=============================================================================!
       implicit none
-
       integer :: n
       complex :: v1(n), v2(n)
-      complex :: INPROD
+      complex :: ninprod 
       integer :: i
 !=============================================================================!
-
-!.... The analytic inner product should yield faster convergence
-
-      INPROD = 0.0
+!.... This analytic inner product may yield faster convergence, but is not
+!.... a real inner-product
+      ninprod = 0.0
       do i = 1, n
-        INPROD = INPROD + v1(i) * v2(i)
+        ninprod = ninprod + v1(i) * v2(i)
       end do
-
       return
       end
-
 !=============================================================================!
-      function C1INPROD(n, v1, v2)
+      function c1inprod(n, v1, v2)
 !=============================================================================!
 !
 !.... Perform and inner product on two complex vectors, v1 and v2
@@ -333,23 +347,19 @@
 !
 !=============================================================================!
       implicit none
-
       integer :: n
       complex :: v1(n), v2(n)
-      complex :: C1INPROD
+      complex :: c1inprod
       integer :: i
 !=============================================================================!
-
-      C1INPROD = 0.0
+      c1inprod = 0.0
       do i = 1, n
-        C1INPROD = C1INPROD + conjg(v1(i)) * v2(i)
+        c1inprod = c1inprod + conjg(v1(i)) * v2(i)
       end do
-
       return
       end
-
 !=============================================================================!
-      function CINPROD(n, v1, v2)
+      function cinprod(n, v1, v2)
 !=============================================================================!
 !
 !.... Perform and inner product on two complex vectors, v1 and v2
@@ -359,17 +369,14 @@
 !.... complex inner-product
 !=============================================================================!
       implicit none
-
       integer :: n
       complex :: v1(n), v2(n)
-      complex :: CINPROD
+      complex :: cinprod
       integer :: i
 !=============================================================================!
-
-      CINPROD = 0.0
+      cinprod = 0.0
       do i = 1, n
-        CINPROD = CINPROD + v1(i) * conjg(v2(i))
+        cinprod = cinprod + v1(i) * conjg(v2(i))
       end do
-
       return
       end

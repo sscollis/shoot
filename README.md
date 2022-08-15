@@ -32,6 +32,19 @@ eigensolution and output the regular and adjoint eigenfuncations.
 The idea is that `shoot` complements `stab` by allowing you to polish, compute
 adjoints, and include nonparallel effects.
 
+That case is in the `test` directory and can be run using:
+```bash
+cd test
+./run.sh
+```
+Notes:
+  1. This uses `ndiff` which must be in your path to do a numerical
+     difference of the regular and adjoint eigenfunctions to make sure that
+     there is no regression.
+  2. To run without the regression test, enter `../shoot.exe < shoot.exe`
+  3. You can visualize the regular and adjoint eigenfunctions using Gnuplot 
+     with the `efun.com` and `adj.com` scripts.
+
 ## Notes
 1. Currently this uses the Numerical Recipes RTSAFE routine (not included)
    so that you need to provide that (or implement another root finder)

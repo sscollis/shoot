@@ -1,14 +1,15 @@
 #!/bin/bash
 #
-# Make for nonparallel
+# Build a fresh version -- note that threee different versions are built
+# depending on the type of base flow you intend to use:
 #
-#make clean && make USE_NR=1 DEFINES=-DUSE_BSLIB MEAN_2D=1
+# shoot.exe   :  collection of 2d profiles
+# shoot-2d.exe:  LNS meanflow on body-fitted mesh (for nonparallel effects)
+# shoot-bl.exe:  Streett's BL format (experimental -- not currently working)
 #
-# Make for parallel
+# Revised:  8/15/22
+# Author:   S.Scott Collis 
 #
-#make clean && make USE_NR=1 DEFINES=-DUSE_BSLIB
-#
-# this one works
-#
+set -e
 make clean && make USE_NR=1 $@
-exit 0
+exit $? 
