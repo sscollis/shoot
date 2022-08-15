@@ -39,6 +39,9 @@ jobs:
     - name: build fsc
       run:  cd fsc && make
       
+    - name: install OpenBLAS
+      run: brew install openblas
+      
     - name: install fsc
       run:  ls $GITHUB_WORKSPACE && echo break && ls $GITHUB_WORKSPACE/..
     
