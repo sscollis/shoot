@@ -70,7 +70,7 @@ jobs:
       run: ln -s gcc.mak Makefile
       
     - name: build shoot
-      run: make USE_LINUXBREW_OPENBLAS=1 LIBNR_DIR=$GITHUB_WORKSPACE/NR-utilities
+      run: make USE_NR=1 USE_LINUXBREW_OPENBLAS=1 LIBNR_DIR=$GITHUB_WORKSPACE/NR-utilities
  
     - name: test shoot
       run:  cd test; ./run.sh
