@@ -10,7 +10,7 @@ NAME   = shoot
 #
 # Turn on NR for now (needs license to use)
 #
-USE_NR = 1
+# USE_NR = 1
 #
 # Turn on ODEINT if desired
 #
@@ -44,7 +44,7 @@ LIB      = -L/home/linuxbrew/.linuxbrew/opt/openblas/lib -lopenblas
 else
 LIB      = -L$(HOME)/local/OpenBLAS/lib -lopenblas
 endif
-#LIB      = -L/usr/local/opt/openblas/lib -lopenblas
+#LIB     = -L/usr/local/opt/openblas/lib -lopenblas
 FC       = gfortran
 #
 # Three different ways to read and work with mean flow
@@ -71,7 +71,8 @@ ifdef USE_NR
   LIB += -L$(LIBNR_DIR) -lnr
 else
   $(warning SHOOT currently requires that you build with USE_NR defined)
-  $(info build will fail at link stage.)
+  $(error See README.md for details))
+  #$(info build will fail at link stage.)
 endif
 
 OBJS2 = grad.o grad2.o g1.o
